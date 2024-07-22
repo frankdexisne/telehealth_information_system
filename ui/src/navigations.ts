@@ -1,0 +1,136 @@
+import {
+  IconChartArcs,
+  IconHome2,
+  IconUser,
+  IconList,
+  IconFile,
+  IconMedicalCrossCircle,
+  IconCalendar,
+  IconSettings,
+  IconMedicalCross,
+  IconPhone,
+  IconHelp,
+} from "@tabler/icons-react";
+import { NavItemProps } from "./interfaces";
+import {
+  TELECLERK_LOG_LIST,
+  PATIENT_LIST,
+  CONSULTATION_NEW,
+  CONSULTATION_FOLLOW_UP,
+  CONSULTATION_ADDITIONAL_ADVICE,
+  CONSULTATION_FOR_ATTACHMENT,
+  CONSULTATION_FOR_PRESCRIPTION,
+  CONSULTATION_ACTIVE,
+  CONSULTATION_COMPLETED,
+  CONSULTATION_HOMIS_MAPPING,
+  CONSULTATION_OUT_WHEN_CALLED,
+  CONSULTATION_REASSIGN,
+  CONSULTATION_TRIAGED,
+  CONSULTATION_UNTRIAGE,
+  DOCTORS_UNFINISH_CONSULTATION,
+  DOCTORS_NEW_CONSULTATION,
+  DOCTORS_ACTIVE_CONSULTATION,
+  DOCTORS_COMPLETED_CONSULTATION,
+  DOCTORS_OUT_WHEN_CALLED,
+  DOCTORS_SCHEDULED_CONSULTATION,
+  DEPARTMENT_LIST,
+  USER_LIST,
+  ROLE_LIST,
+} from "./interfaces/PermissionList";
+import { TELECLERK, DOCTOR, ADMINISTRATOR } from "./interfaces/RoleList";
+
+const navigations: NavItemProps[] = [
+  {
+    to: "/",
+    label: "Dashboard",
+    lefticon: IconChartArcs,
+  },
+  {
+    to: "/teleclerk",
+    label: "Teleclerk",
+    lefticon: IconHome2,
+    roles: [TELECLERK, ADMINISTRATOR],
+  },
+  {
+    to: "/patients",
+    label: "Patient List",
+    lefticon: IconUser,
+    permissions: [PATIENT_LIST],
+  },
+  {
+    to: "/teleclerk-logs",
+    label: "Teleclerk Logs",
+    lefticon: IconUser,
+    roles: [TELECLERK],
+    permissions: [TELECLERK_LOG_LIST],
+  },
+  {
+    to: "/transactions/new-consultations",
+    label: "Transactions",
+    lefticon: IconList,
+    permissions: [
+      CONSULTATION_NEW,
+      CONSULTATION_FOLLOW_UP,
+      CONSULTATION_ADDITIONAL_ADVICE,
+      CONSULTATION_FOR_ATTACHMENT,
+      CONSULTATION_FOR_PRESCRIPTION,
+      CONSULTATION_HOMIS_MAPPING,
+      CONSULTATION_OUT_WHEN_CALLED,
+    ],
+  },
+  {
+    to: "/teleconsulting/tele-anchor/un-triage-consultations",
+    label: "Tele-Anchor",
+    lefticon: IconMedicalCross,
+    permissions: [
+      CONSULTATION_UNTRIAGE,
+      CONSULTATION_TRIAGED,
+      CONSULTATION_ACTIVE,
+      CONSULTATION_COMPLETED,
+      CONSULTATION_REASSIGN,
+    ],
+  },
+  {
+    to: "/teleconsulting/doctor/unfinished-consultations",
+    label: "Tele-Consulting",
+    lefticon: IconMedicalCrossCircle,
+    permissions: [
+      DOCTORS_UNFINISH_CONSULTATION,
+      DOCTORS_NEW_CONSULTATION,
+      DOCTORS_ACTIVE_CONSULTATION,
+      DOCTORS_COMPLETED_CONSULTATION,
+      DOCTORS_OUT_WHEN_CALLED,
+      DOCTORS_SCHEDULED_CONSULTATION,
+    ],
+  },
+  {
+    to: "/tele-medicine",
+    label: "Tele-Medicine",
+    lefticon: IconPhone,
+    roles: [DOCTOR, ADMINISTRATOR],
+  },
+  {
+    to: "/schedules",
+    label: "Patient Schedule",
+    lefticon: IconCalendar,
+    roles: [TELECLERK, ADMINISTRATOR],
+  },
+  {
+    to: "/reports",
+    label: "Reports",
+    lefticon: IconFile,
+  },
+  {
+    to: "/settings/users",
+    label: "Settings",
+    lefticon: IconSettings,
+    permissions: [DEPARTMENT_LIST, USER_LIST, ROLE_LIST],
+  },
+  {
+    to: "/help-center",
+    label: "Help Center",
+    lefticon: IconHelp,
+  },
+];
+
+export default navigations;

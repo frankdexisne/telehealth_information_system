@@ -1,0 +1,47 @@
+.fc-today-button {
+  background-color: #228be6; /* Change this to your desired color */
+  border-color: #228be6; /* Change this to your desired color */
+  color: white; /* Change this to your desired text color */
+}
+
+/* Previous button */
+.fc-prev-button {
+  background-color: #228be6; /* Change this to your desired color */
+  border-color: #228be6; /* Change this to your desired color */
+  color: white; /* Change this to your desired text color */
+}
+
+/* Next button */
+.fc-next-button {
+  background-color: #228be6; /* Change this to your desired color */
+  border-color: #228be6; /* Change this to your desired color */
+  color: white; /* Change this to your desired text color */
+}
+
+/* General button styles */
+.fc-button {
+  background-color: #228be6; /* Change this to your desired color */
+  border-color: #228be6; /* Change this to your desired color */
+  color: white; /* Change this to your desired text color */
+}
+
+/* Primary button styles */
+.fc-button-primary {
+  background-color: #228be6 !important; /* Change this to your desired color */
+  border-color: #228be6 !important; /* Change this to your desired color */
+  color: white; /* Change this to your desired text color */
+}
+
+/* Active button styles */
+.fc-button-active {
+  background-color: #228be6; /* Change this to your desired color */
+  border-color: #228be6; /* Change this to your desired color */
+  color: white; /* Change this to your desired text color */
+}
+
+/* Hover state for buttons */
+.fc-button:hover {
+  background-color: #228be6; /* Change this to your desired hover color */
+  border-color: #228be6; /* Change this to your desired hover color */
+  color: white; /* Change this to your desired text color */
+}
