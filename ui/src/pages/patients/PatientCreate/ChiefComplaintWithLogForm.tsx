@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import moment from "moment";
 
 export interface ChieftComplaintFormData {
   platform_id: number;
@@ -129,7 +130,7 @@ const ChiefComplaintWithLogForm = ({
             name="patstr"
             control={control}
             label="Street"
-            isRequired
+            // isRequired
           />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
@@ -137,7 +138,7 @@ const ChiefComplaintWithLogForm = ({
             name="patzip"
             control={control}
             label="Zipcode"
-            isRequired
+            // isRequired
           />
         </Grid.Col>
       </Grid>
@@ -153,6 +154,7 @@ const ChiefComplaintWithLogForm = ({
             api="selects/platforms"
             label="Platform"
             name="platform_id"
+            isRequired
           />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
@@ -165,6 +167,7 @@ const ChiefComplaintWithLogForm = ({
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
           <TextInput
+            type="date"
             name="log_date"
             control={control}
             label="Log Date"
@@ -173,6 +176,7 @@ const ChiefComplaintWithLogForm = ({
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
           <TextInput
+            type="time"
             name="log_time"
             control={control}
             label="Log Time"

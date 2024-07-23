@@ -17,8 +17,7 @@ import Day from "../ReferredToOPD/Day";
 import AppTanstackTable, {
   ColumnDefinition,
 } from "../../../components/tables/AppTanstackTable";
-import { getRequest, postRequest, useTable } from "../../../hooks";
-import { UserRowData } from "../../settings/users";
+import { postRequest, useTable } from "../../../hooks";
 import { MonthPicker } from "@mantine/dates";
 
 interface DepartmentItemProps {
@@ -170,10 +169,12 @@ const ScheduleDatesList = ({
   monthYear,
   departmentId,
   onSelectDate,
+  activeDate,
 }: {
   monthYear: string;
   departmentId: number;
   onSelectDate: (date: string) => void;
+  activeDate: string;
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [dates, setDates] = useState([]);
@@ -199,12 +200,17 @@ const ScheduleDatesList = ({
         setDates(res.data);
       });
     }, 500);
+
+    return () => {
+      clearTimeout(fetchDatesTimeout);
+    };
   }, [monthYear, departmentId]);
 
   return (
     <div className="w-full flex overflow-x-scroll space-x-2 px-2 pb-4 scrollbars min-h-[200px]">
       {dates.map((item) => {
         const currentDate = new Date(item.schedule_date);
+        console.log(currentDate, selectedDate);
         return (
           <div className="min-w-[160px] w-[160px]">
             <Day
@@ -216,7 +222,7 @@ const ScheduleDatesList = ({
                 setSelectedDate(date);
                 onSelectDate(moment(date).format("YYYY-MM-DD"));
               }}
-              active={currentDate === selectedDate}
+              active={moment(currentDate).format("YYYY-MM-DD") === activeDate}
             />
           </div>
         );
@@ -231,7 +237,9 @@ const Schedules = () => {
   );
   const [selectedDepartment, setSelectedDepartment] = useState<number>();
   const [selectedDate, setSelectedDate] = useState<Date>();
-
+  const [activeDate, setActiveDate] = useState<string>(
+    moment().format("YYYY-MM-DD")
+  );
   return (
     <div>
       <PageHeader title="Patient OPD Appointment" />
@@ -268,7 +276,11 @@ const Schedules = () => {
               <ScheduleDatesList
                 departmentId={selectedDepartment}
                 monthYear={selectedMonth}
-                onSelectDate={(date) => setSelectedDate(new Date(date))}
+                onSelectDate={(date) => {
+                  setSelectedDate(new Date(date));
+                  setActiveDate(date);
+                }}
+                activeDate={activeDate}
               />
             )}
             {/* <div className="w-full flex overflow-x-scroll space-x-2 px-2 pb-4 scrollbars">

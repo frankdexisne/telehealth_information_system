@@ -312,6 +312,45 @@ class PatientScheduleController extends ApiController
         ->paginate($pageSize);
     }
 
+    public function getScheduleByMonth(Department $department, $monthYear) {
+        $explodeMonthDate = explode('-', $monthYear);
+        $month = $explodeMonthDate[1];
+        $year = $explodeMonthDate[0];
+        // Create Carbon instance for the first day of the month
+        $startOfMonth = Carbon::create($year, $month, 1)->startOfDay();
+
+        if ($startOfMonth < now()) {
+            $startOfMonth = now();
+        }
+
+        // Create Carbon instance for the last day of the month
+        $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
+
+        $start = $startOfMonth;
+
+        $scheduleDays = $department->departmentHasSchedule()->pluck('day_id')->toArray();
+
+        $dates = [];
+        while($start <= $endOfMonth) {
+            $scheduled = PatientSchedule::where('department_id', $department->id)
+            ->whereDate('schedule_datetime', $start->format("Y-m-d"))
+            ->count();
+
+            if (in_array($start->dayOfWeek, $scheduleDays)){
+                array_push($dates, [
+                    'date' => $start->format("Y-m-d"),
+                    'scheduled' => $scheduled,
+                    'daily_limit' => $department->daily_limit,
+                ]);
+            }
+            $start->addDay();
+        }
+
+        return response()->json([
+            'dates' => $dates,
+        ]);
+    }
+
 
 
     

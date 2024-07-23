@@ -64,23 +64,17 @@ return [
         ],
 
         'homis' => [
-            'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => 'hospital',
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOMIS_HOST', '128.2.188.22'),
+            'port' => env('DB_HOMIS_PORT', '49170'),
+            'database' => env('DB_HOMIS_DATABASE', 'hospital'),
+            'username' => env('DB_HOMIS_USERNAME', 'sa'),
+            'password' => env('DB_HOMIS_PASSWORD', 'brhmcR00t'),
+            'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'encrypt' => env('DB_ENCRYPT', 'yes'),
+            'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'true')
         ],
 
         'old_telehealth' => [

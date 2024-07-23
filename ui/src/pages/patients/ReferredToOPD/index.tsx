@@ -17,7 +17,7 @@ import { usePatient } from "../../../hooks";
 import { IconCheck, IconSearch } from "@tabler/icons-react";
 import ChiefComplaints from "../../patients/PatientProfile/ChiefComplaints";
 import ChiefComplaintWithLogForm from "../PatientCreate/ChiefComplaintWithLogForm";
-import AdditionalPatientFormData from "../PatientCreate/AdditionaPatientFormData";
+import AdditionalPatientFormData from "./AdditionalPatientFormData";
 import { ApiSelect } from "../../../components/use-form-controls";
 import ReferralForm from "./ReferralForm";
 
@@ -225,7 +225,7 @@ const ReferredToOPD = () => {
               searched={searchFilter !== null}
               onCreate={() => {
                 nextStep();
-                setCreating(false);
+                setCreating(true);
                 setFromHOMIS(false);
                 setSelectedId(undefined);
               }}
@@ -250,40 +250,45 @@ const ReferredToOPD = () => {
             </div>
           </Stepper.Step>
           <Stepper.Step label="Final step" description="Completing Details">
-            {!fromHOMIS && (
-              <div className="w-full flex min-h-[500px]">
-                <div className="w-[30%]">
-                  <div className="mb-5" />
-                  {selectedId && <PatientInformation id={selectedId} />}
-                  <>
-                    <Divider my={10} />
-                    <Button
-                      color="gray"
-                      w="100%"
-                      mt={2}
-                      leftSection={<IconSearch />}
-                      onClick={() => setActive(0)}
-                    >
-                      SEARCH AGAIN
-                    </Button>
-                  </>
-                </div>
-                <div className="w-[70%] pl-5">
-                  <ReferralForm />
-                </div>
-              </div>
-            )}
-
-            {fromHOMIS && (
+            {creating && <div>CREATE</div>}
+            {!creating && (
               <>
-                {hpercode && (
-                  <AdditionalPatientFormData
-                    hpercode={hpercode}
-                    onSubmit={(res) => {}}
-                    onCancel={() => {
-                      setActive(0);
-                    }}
-                  />
+                {!fromHOMIS && (
+                  <div className="w-full flex min-h-[500px]">
+                    <div className="w-[30%]">
+                      <div className="mb-5" />
+                      {selectedId && <PatientInformation id={selectedId} />}
+                      <>
+                        <Divider my={10} />
+                        <Button
+                          color="gray"
+                          w="100%"
+                          mt={2}
+                          leftSection={<IconSearch />}
+                          onClick={() => setActive(0)}
+                        >
+                          SEARCH AGAIN
+                        </Button>
+                      </>
+                    </div>
+                    <div className="w-[70%] pl-5">
+                      <ReferralForm />
+                    </div>
+                  </div>
+                )}
+
+                {fromHOMIS && (
+                  <>
+                    {hpercode && (
+                      <AdditionalPatientFormData
+                        hpercode={hpercode}
+                        onSubmit={(res) => {}}
+                        onCancel={() => {
+                          setActive(0);
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </>
             )}

@@ -1,27 +1,37 @@
 import { useForm } from "react-hook-form";
 import {
-  ApiSelect,
   TextInput,
   Select,
+  ApiSelect,
 } from "../../../components/use-form-controls";
 import {
-  Divider,
-  Grid,
-  Text,
-  Select as SelectCore,
-  TextInput as TextInputCore,
-  Loader,
-  Modal,
   Button,
   ButtonGroup,
+  Grid,
+  Divider,
+  InputLabel,
+  TextInput as TextInputCore,
+  Title,
+  Text,
+  Modal,
+  Select as SelectCore,
+  Loader,
 } from "@mantine/core";
-import Day from "./Day";
-import moment from "moment";
-import { useState, useEffect } from "react";
-import { getRequest } from "../../../hooks";
-import { RootState } from "../../../store";
+import {
+  postRequest,
+  errorProvider,
+  getRequest,
+} from "../../../hooks/use-http";
+import { AxiosResponse } from "axios";
 import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import ProfileHeader from "../PatientProfile/ProfileHeader";
+import { useHomisPatient } from "../../../hooks";
+import { IconSearch } from "@tabler/icons-react";
+import Day from "./Day";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 interface AdditionalPatientFormData {
   contact_no: string;
@@ -40,26 +50,79 @@ interface AdditionalPatientFormData {
   schedule_datetime: string;
 }
 
+interface AdditionalPatientFormDataProps {
+  hpercode: string | null;
+  onCancel: () => void;
+  onSubmit: (res: AxiosResponse) => void;
+}
+
 interface ScheduleDate {
   date: string;
   scheduled: number;
   daily_limit: null | number;
 }
 
-const ReferralForm = () => {
+const DemographicItem = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) => {
+  return (
+    <div className="flex items-center">
+      <InputLabel className="w-[30%]">{label}</InputLabel>
+      <TextInputCore w="70%" variant="unstyled" value={value} fw="bold" />
+    </div>
+  );
+};
+
+const AdditionalPatientFormData = ({
+  hpercode,
+  onCancel,
+  onSubmit,
+}: AdditionalPatientFormDataProps) => {
   const regions = useSelector((state: RootState) => state.select.regions);
   const departments = useSelector(
     (state: RootState) => state.select.departments
   );
-  const { control, setValue, watch } = useForm();
 
+  const additionalFormHandler = (payload: AdditionalPatientFormData) => {
+    postRequest("/patients/" + hpercode + "/clone-to-telehealth", payload)
+      .then((res) => onSubmit(res))
+      .catch((error) => {
+        errorProvider<AdditionalPatientFormData>(
+          error,
+          function (_errors: AdditionalPatientFormData) {
+            Object.keys(_errors).map((field) => {
+              setError(field as keyof AdditionalPatientFormData, {
+                type: "custom",
+                message:
+                  _errors[field as keyof AdditionalPatientFormData]?.toString(),
+              });
+            });
+          }
+        );
+      });
+  };
+
+  const { data } = useHomisPatient({
+    hpercode: hpercode!,
+  });
+
+  const { control, handleSubmit, setError, watch, setValue } =
+    useForm<AdditionalPatientFormData>();
+
+  const selectedRegion = watch("regcode");
+  const selectedProvince = watch("provcode");
+  const selectedCity = watch("ctycode");
+  const [opened, { open, close }] = useDisclosure(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(
     moment().format("YYYY-MM")
   );
   const [scheduleDates, setScheduleDates] = useState<ScheduleDate[]>([]);
   const [selectedDepartment, setSelectedDepartment] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -79,85 +142,97 @@ const ReferralForm = () => {
     return () => clearTimeout(timeout);
   }, [selectedMonth, selectedDepartment]);
 
-  const selectedRegion = watch("regcode");
-  const selectedProvince = watch("provcode");
-  const selectedCity = watch("ctycode");
-
   return (
     <>
-      <SelectCore
-        data={departments}
-        label="Department"
-        searchable
-        onChange={(value: string | null) => {
-          if (value) setSelectedDepartment(value);
-        }}
-      />
-      <TextInputCore
-        type="month"
-        label="Month"
-        name="monthYear"
-        onChange={(e) => setSelectedMonth(e.target.value)}
-        min={moment().format("YYYY-MM")}
-        value={selectedMonth}
-      />
-      <Divider
-        my={15}
-        label={<Text>Available Dates</Text>}
-        labelPosition="left"
-      />
-      {loading && <Loader />}
-      {!loading && (
-        <Grid>
-          {scheduleDates.map((date: ScheduleDate, index: number) => (
-            <Grid.Col span={2}>
-              <Day
-                key={index}
-                date={new Date(date.date)}
-                scheduled={date.scheduled}
-                dailyLimit={date.daily_limit || 0}
-                onSelect={() => {
-                  setValue("schedule_datetime", date.date + " 08:00:00");
-                  open();
-                }}
-              />
-            </Grid.Col>
-          ))}
-        </Grid>
-      )}
+      <div className="w-full flex min-h-[500px]">
+        <div className="w-[30%]">
+          <div className="mb-5" />
+          <ProfileHeader
+            name={`${data?.hperson?.patlast}, ${data?.hperson.patfirst} ${data?.hperson.patmiddle}`}
+            hpercode={hpercode}
+            contact_no="NOT SET"
+            gender={data?.patsex === "M" ? "male" : "female"}
+            dob={data?.patbdate?.toString()?.replace("00:00:00", "")}
+          />
+          <Divider label="Demographics" my={10} />
+          <DemographicItem label="Region" value={data?.demographic?.regname} />
+          <DemographicItem
+            label="Province"
+            value={data?.demographic?.provname}
+          />
+          <DemographicItem label="City" value={data?.demographic?.ctyname} />
+          <DemographicItem
+            label="Barangay"
+            value={data?.demographic?.bgyname}
+          />
+          <Divider my={20} />
+          <div className="flex justify-center mt-15">
+            <Title size={20} fw="bolder" className="text-slate-500">
+              Migrating HOMIS Patient to Telehealth
+            </Title>
+          </div>
+          <Button
+            w="100%"
+            mt={20}
+            color="gray"
+            leftSection={<IconSearch />}
+            onClick={onCancel}
+          >
+            <div className="w-full">SEARCH AGAIN</div>
+          </Button>
+        </div>
+        <div className="w-[70%] pl-5">
+          <SelectCore
+            data={departments}
+            label="Department"
+            searchable
+            onChange={(value: string | null) => {
+              if (value) setSelectedDepartment(value);
+            }}
+          />
+          <TextInputCore
+            type="month"
+            label="Month"
+            name="monthYear"
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            value={selectedMonth}
+            min={moment().format("YYYY-MM")}
+          />
+          <Divider
+            my={15}
+            label={<Text>Available Dates</Text>}
+            labelPosition="left"
+          />
+          {loading && <Loader />}
+          {!loading && (
+            <Grid>
+              {scheduleDates.map((date: ScheduleDate, index: number) => (
+                <Grid.Col span={2}>
+                  <Day
+                    key={index}
+                    date={new Date(date.date)}
+                    scheduled={date.scheduled}
+                    dailyLimit={date.daily_limit || 0}
+                    onSelect={() => {
+                      setValue("schedule_datetime", date.date + " 08:00:00");
+                      open();
+                    }}
+                  />
+                </Grid.Col>
+              ))}
+            </Grid>
+          )}
+        </div>
+      </div>
 
-      {/* <ApiSelect
-        control={control}
-        label="Department"
-        name="department_id"
-        api="selects/departments?is_doctor=1"
-      />
-      <TextInput
-        type="month"
-        control={control}
-        label="Month"
-        name="month_year"
-      />
-      <Divider
-        my={15}
-        label={<Text>Available Dates</Text>}
-        labelPosition="left"
-      />
-      <Grid>
-        <Grid.Col span={2}>
-          <Day date={new Date()} scheduled={10} dailyLimit={20} />
-        </Grid.Col>
-      </Grid> */}
       <Modal
         size="xl"
         title="Appointment Information"
         opened={opened}
         onClose={close}
-        closeOnClickOutside={false}
-        centered
       >
         <form>
-          {/* <Divider
+          <Divider
             label={<Text size="sm">Demographic</Text>}
             labelPosition="left"
             mb={5}
@@ -170,7 +245,7 @@ const ReferralForm = () => {
                 label="Region"
                 isRequired
                 data={regions}
-                // value={data?.demographic.regcode}
+                value={data?.demographic.regcode}
                 // defaultValue="05"
               />
             </Grid.Col>
@@ -181,7 +256,7 @@ const ReferralForm = () => {
                 name="provcode"
                 api={`selects/provinces?regcode=${selectedRegion || "05"}`}
                 isRequired
-                // value={data?.demographic?.provcode}
+                value={data?.demographic?.provcode}
                 // value="0505"
               />
             </Grid.Col>
@@ -192,7 +267,7 @@ const ReferralForm = () => {
                 name="ctycode"
                 api={`selects/cities?provcode=${selectedProvince || "0505"}`}
                 isRequired
-                // value={data?.demographic?.ctycode}
+                value={data?.demographic?.ctycode}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
@@ -200,9 +275,9 @@ const ReferralForm = () => {
                 label="Barangay"
                 control={control}
                 name="bgycode"
-                api={`selects/barangays?ctycode=${selectedCity}`}
+                api={`selects/barangays?ctycode=${selectedCity || "050506"}`}
                 isRequired
-                // value={data?.demographic?.brg}
+                value={data?.demographic?.brg}
               />
             </Grid.Col>
           </Grid>
@@ -213,13 +288,13 @@ const ReferralForm = () => {
             <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
               <TextInput name="patzip" control={control} label="Zipcode" />
             </Grid.Col>
-          </Grid> */}
-          {/* <Divider
+          </Grid>
+          <Divider
             label={<Text size="sm">Appointment Detail</Text>}
             labelPosition="left"
             my={10}
-          /> */}
-          {/* <TextInput
+          />
+          <TextInput
             name="contact_no"
             label="Contact Number"
             control={control}
@@ -240,7 +315,7 @@ const ReferralForm = () => {
               { value: "EMPLO", label: "EMPLOYED" },
               { value: "UNEMP", label: "UNEMPLOYED" },
             ]}
-          /> */}
+          />
           <Grid>
             <Grid.Col span={6}>
               <ApiSelect
@@ -296,4 +371,4 @@ const ReferralForm = () => {
   );
 };
 
-export default ReferralForm;
+export default AdditionalPatientFormData;

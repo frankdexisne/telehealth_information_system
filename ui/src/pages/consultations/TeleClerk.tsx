@@ -62,7 +62,7 @@ const Teleclerk = () => {
             </Button>
 
             <Button component={NavLink} to="/referral-to-opd" w={200}>
-              REFFERED TO OPD
+              OPD APPOINTMENT
             </Button>
             <Button w={200} component={NavLink} to="/inquiry" color="gray">
               INQUIRY

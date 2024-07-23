@@ -15,7 +15,7 @@ import { useForm } from "@mantine/form";
 import PatientResult from "./PatientResult";
 import PageHeader from "../../../components/base/PageHeader";
 import ProfileHeader from "../../patients/PatientProfile/ProfileHeader";
-import { usePatient } from "../../../hooks";
+import { postRequest, usePatient } from "../../../hooks";
 import {
   IconCheck,
   IconExclamationMark,
@@ -26,6 +26,8 @@ import ChiefComplaintWithLogForm, {
   ChieftComplaintFormData,
 } from "./ChiefComplaintWithLogForm";
 import AdditionalPatientFormData from "./AdditionaPatientFormData";
+import { useNavigate } from "react-router-dom";
+import NewProfileForm from "./NewProfileForm";
 
 interface PatientSearchForm {
   hpercode: string;
@@ -203,6 +205,7 @@ const PatientSearch = ({ onSearch }: PatientSearchProps) => {
 };
 
 const PatientCreate = () => {
+  const navigate = useNavigate();
   const [active, setActive] = useState(0);
   const [creating, setCreating] = useState(false);
   const [isFollowUp, setIsFollowUp] = useState<boolean>(false);
@@ -250,7 +253,7 @@ const PatientCreate = () => {
               searched={searchFilter !== null}
               onCreate={() => {
                 nextStep();
-                setCreating(false);
+                setCreating(true);
                 setFromHOMIS(false);
                 setSelectedId(undefined);
               }}
@@ -276,92 +279,104 @@ const PatientCreate = () => {
             </div>
           </Stepper.Step>
           <Stepper.Step label="Final step" description="Completing Details">
-            {!fromHOMIS && (
-              <div className="w-full flex min-h-[500px]">
-                <div className="w-[30%]">
-                  <div className="mb-5" />
-                  {selectedId && <PatientInformation id={selectedId} />}
-                  <Divider my={20} />
-                  <>
-                    <Button
-                      w="100%"
-                      my={2}
-                      leftSection={!isFollowUp ? <IconCheck /> : undefined}
-                      color={!isFollowUp ? "green" : "blue"}
-                      onClick={() => setIsFollowUp(false)}
-                    >
-                      NEW CHIEF COMPLAINT
-                    </Button>
-                    <Button
-                      w="100%"
-                      my={2}
-                      color={isFollowUp ? "green" : "blue"}
-                      leftSection={isFollowUp ? <IconCheck /> : undefined}
-                      onClick={() => setIsFollowUp(true)}
-                    >
-                      FOLLOW UP
-                    </Button>
-
-                    <Divider my={10} />
-                    <Button
-                      color="gray"
-                      w="100%"
-                      mt={2}
-                      leftSection={<IconSearch />}
-                      onClick={() => setActive(0)}
-                    >
-                      SEARCH AGAIN
-                    </Button>
-                  </>
-                </div>
-                <div className="w-[70%] pl-5">
-                  {isFollowUp && (
-                    <>
-                      <ChiefComplaints
-                        patient_profile_id={selectedId!}
-                        onCreate={() => setCreating(true)}
-                        showAction={true}
-                        platform="facebook/messenger"
-                        hideAddButton
-                      />
-                    </>
-                  )}
-                  {!isFollowUp && (
-                    <>
-                      <Title mt={20} mb={10} size={18}>
-                        Patient Chief Complaint Details
-                      </Title>
-                      <ChiefComplaintWithLogForm
-                        onBack={() => {
-                          setCreating(false);
-                        }}
-                        values={{
-                          regcode: selectedPatient?.regcode,
-                          provcode: selectedPatient?.provcode,
-                          ctycode: selectedPatient?.ctycode,
-                          bgycode: selectedPatient?.brg,
-                        }}
-                        submitLabel="SUBMIT"
-                        backLabel="CANCEL"
-                        onSubmit={(payload) => console.log(payload)}
-                        hideBackButton
-                      />
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {fromHOMIS && (
+            {creating && <NewProfileForm />}
+            {!creating && (
               <>
-                {hpercode && (
-                  <AdditionalPatientFormData
-                    hpercode={hpercode}
-                    onSubmit={(res) => {}}
-                    onCancel={() => {
-                      setActive(0);
-                    }}
-                  />
+                {!fromHOMIS && (
+                  <div className="w-full flex min-h-[500px]">
+                    <div className="w-[30%]">
+                      <div className="mb-5" />
+                      {selectedId && <PatientInformation id={selectedId} />}
+                      <Divider my={20} />
+                      <>
+                        <Button
+                          w="100%"
+                          my={2}
+                          leftSection={!isFollowUp ? <IconCheck /> : undefined}
+                          color={!isFollowUp ? "green" : "blue"}
+                          onClick={() => setIsFollowUp(false)}
+                        >
+                          NEW CHIEF COMPLAINT
+                        </Button>
+                        <Button
+                          w="100%"
+                          my={2}
+                          color={isFollowUp ? "green" : "blue"}
+                          leftSection={isFollowUp ? <IconCheck /> : undefined}
+                          onClick={() => setIsFollowUp(true)}
+                        >
+                          FOLLOW UP
+                        </Button>
+
+                        <Divider my={10} />
+                        <Button
+                          color="gray"
+                          w="100%"
+                          mt={2}
+                          leftSection={<IconSearch />}
+                          onClick={() => setActive(0)}
+                        >
+                          SEARCH AGAIN
+                        </Button>
+                      </>
+                    </div>
+                    <div className="w-[70%] pl-5">
+                      {isFollowUp && (
+                        <>
+                          <ChiefComplaints
+                            patient_profile_id={selectedId!}
+                            onCreate={() => setCreating(true)}
+                            showAction={true}
+                            platform="facebook/messenger"
+                            hideAddButton
+                          />
+                        </>
+                      )}
+                      {!isFollowUp && (
+                        <>
+                          <Title mt={20} mb={10} size={18}>
+                            Patient Chief Complaint Details
+                          </Title>
+                          <ChiefComplaintWithLogForm
+                            onBack={() => {
+                              setCreating(false);
+                            }}
+                            values={{
+                              regcode: selectedPatient?.regcode,
+                              provcode: selectedPatient?.provcode,
+                              ctycode: selectedPatient?.ctycode,
+                              bgycode: selectedPatient?.brg,
+                            }}
+                            submitLabel="SUBMIT"
+                            backLabel="CANCEL"
+                            onSubmit={(payload) => {
+                              postRequest(
+                                `/patient-chief-complaints/${selectedId}`,
+                                payload
+                              ).then(() => {
+                                navigate("/teleclerk");
+                              });
+                            }}
+                            hideBackButton
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {fromHOMIS && (
+                  <>
+                    {hpercode && (
+                      <AdditionalPatientFormData
+                        hpercode={hpercode}
+                        onSubmit={(res) => {}}
+                        onCancel={() => {
+                          setActive(0);
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </>
             )}
@@ -370,14 +385,8 @@ const PatientCreate = () => {
             Completed, click back button to get to previous step
           </Stepper.Completed>
         </Stepper>
-
-        {/* <Group justify="center" mt="xl">
-          <Button variant="default" onClick={prevStep}>
-            Back
-          </Button>
-          <Button onClick={nextStep}>Next step</Button>
-        </Group> */}
       </Paper>
+      <Divider />
     </div>
   );
 };

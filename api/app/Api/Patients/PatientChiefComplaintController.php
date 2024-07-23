@@ -55,6 +55,17 @@ class PatientChiefComplaintController extends ApiController
         ->fill($request->only('brg', 'ctycode', 'provcode', 'patstr', 'regcode', 'patzip'))
         ->save();
 
+         Demographic::firstOrNew(['patient_profile_id' => $patientProfile->id])
+        ->fill([
+            'brg' => $request->bgycode,
+            'ctycode' => $request->ctycode,
+            'provcode' => $request->provcode,
+            'regcode' => $request->regcode,
+            'patstr' => $request->patstr ? $request->patstr : "",
+            'patzip' => $request->patzip
+        ])
+        ->save();
+
 
         $callLog = $this->callLog->generateCallLog($patientProfile, $request->platform_id);
         $data = $this->model->create(
@@ -134,13 +145,20 @@ class PatientChiefComplaintController extends ApiController
     public function createFollowUp(Request $request, PatientChiefComplaint $patientChiefComplaint) {
         
         Demographic::firstOrNew(['patient_profile_id' => $patientChiefComplaint->patient_profile_id])
-        ->fill($request->only('brg', 'ctycode', 'provcode', 'patstr', 'regcode', 'patzip'))
+        ->fill([
+            'brg' => $request->bgycode,
+            'ctycode' => $request->ctycode,
+            'provcode' => $request->provcode,
+            'regcode' => $request->regcode,
+            'patstr' => $request->patstr ? $request->patstr : "",
+            'patzip' => $request->patzip
+        ])
         ->save();
 
         $callLog = $this->callLog->generateCallLog($patientChiefComplaint->patientProfile, $request->platform_id);
         
         $lastEncounter = $patientChiefComplaint->encounter()->orderBy('created_at', 'DESC')->first();
-        $lastDepartmentId = $lastEncounter->departmentAssignment()->department_id;
+        $lastDepartmentId = $lastEncounter->departmentAssignment()->count() > 0 ? $lastEncounter->departmentAssignment()->department_id : null;
 
         $encounter = $patientChiefComplaint->encounter()->create([
             'is_follow_up' => 1,
@@ -182,7 +200,7 @@ class PatientChiefComplaintController extends ApiController
             'log_datetime' => $request->log_date . ' ' . $request->log_time,
             'platform_id' => $request->platform_id,
             'informant' => $request->informant,
-            'inquiry' => $request->chief_complaint,
+            'inquiry' => $patientChiefComplaint->chief_complaint,
             'is_teleconsult' => 1,
             'encounter' => $encounter->id
         ]);

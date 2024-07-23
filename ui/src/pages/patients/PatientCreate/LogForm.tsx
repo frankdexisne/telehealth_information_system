@@ -14,6 +14,9 @@ export interface LogFormData {
   log_time: string;
   platform: string;
   informant: string;
+  regcode: string;
+  provcode: string;
+  ctycode: string;
 }
 
 interface LogFormProps {
@@ -108,7 +111,7 @@ const LogForm = ({
             name="patstr"
             control={control}
             label="Street"
-            isRequired
+            // isRequired
           />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
@@ -116,7 +119,7 @@ const LogForm = ({
             name="patzip"
             control={control}
             label="Zipcode"
-            isRequired
+            // isRequired
           />
         </Grid.Col>
       </Grid>

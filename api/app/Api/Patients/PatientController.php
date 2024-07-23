@@ -147,7 +147,7 @@ class PatientController extends ApiController
                     'patfirst AS fname', 
                     'patmiddle AS mname', 
                     DB::raw("CASE WHEN patsex = 'M' THEN 'Male' ELSE 'Female' END AS gender"), 
-                    DB::raw("FORMAT(patbdate, 'yyyy-MM-dd') AS dob"),
+                    DB::raw("CONVERT(char(10), patbdate,126) AS dob"),
                     'haddr.brg',
                     'haddr.ctycode',
                     'haddr.provcode',
@@ -359,6 +359,20 @@ class PatientController extends ApiController
         $patientProfileId = $hperson->patientClone($request->contact_no, $request->occupation);
 
         $patientProfile = PatientProfile::find($patientProfileId);
+
+        Demographic::firstOrNew([
+            'patient_profile_id' => $patientProfileId
+        ])
+        ->fill([
+            'regcode' => $request->regcode,
+            'provcode' => $request->provcode,
+            'ctycode' => $request->ctycode,
+            'bgycode' => $request->bgycode,
+            'patstr' => $request->patstr ? $request->patstr : "",
+            'patzip' => $request->patzip ? $request->patzip : "",
+        ])
+        ->save();
+
         $callLog = $this->callLog->generateCallLog($patientProfile, 2);
 
         $data = PatientChiefComplaint::create([
@@ -496,7 +510,7 @@ class PatientController extends ApiController
             'patfirst AS fname', 
             'patmiddle AS mname', 
             DB::raw("CASE WHEN patsex = 'M' THEN 'Male' ELSE 'Female' END AS gender"), 
-            DB::raw("FORMAT(patbdate, 'yyyy-MM-dd') AS dob"),
+            DB::raw("CONVERT(char(10), patbdate,126) AS dob"),
             'haddr.brg',
             'haddr.ctycode',
             'haddr.provcode',

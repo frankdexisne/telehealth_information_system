@@ -13,6 +13,7 @@ import {
   TextInput as TextInputCore,
   Title,
   Text,
+  Loader,
 } from "@mantine/core";
 import { postRequest, errorProvider } from "../../../hooks/use-http";
 import { AxiosResponse } from "axios";
@@ -21,6 +22,7 @@ import { RootState } from "../../../store";
 import ProfileHeader from "../PatientProfile/ProfileHeader";
 import { useHomisPatient } from "../../../hooks";
 import { IconSearch } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 interface AdditionalPatientFormData {
   contact_no: string;
@@ -36,6 +38,7 @@ interface AdditionalPatientFormData {
   regcode: string;
   provcode: string;
   ctycode: string;
+  bgycode: string;
 }
 
 interface AdditionalPatientFormDataProps {
@@ -91,18 +94,32 @@ const AdditionalPatientFormData = ({
       });
   };
 
-  const { data } = useHomisPatient({
+  const { data, isFetched } = useHomisPatient({
     hpercode: hpercode!,
   });
 
-  const { control, handleSubmit, setError, watch } =
+  const { control, handleSubmit, setError, watch, setValue } =
     useForm<AdditionalPatientFormData>();
+
+  useEffect(() => {
+    const setDemographicTimeout = setTimeout(() => {
+      if (isFetched) {
+        const { demographic } = data;
+        setValue("regcode", demographic.regcode);
+        setValue("provcode", demographic.provcode);
+        setValue("ctycode", demographic.ctycode);
+        setValue("bgycode", demographic.brg);
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(setDemographicTimeout);
+    };
+  }, [data]);
 
   const selectedRegion = watch("regcode");
   const selectedProvince = watch("provcode");
   const selectedCity = watch("ctycode");
-
-  console.log(data);
 
   return (
     <div className="w-full flex min-h-[500px]">
@@ -153,7 +170,7 @@ const AdditionalPatientFormData = ({
                 label="Region"
                 isRequired
                 data={regions}
-                value={data?.demographic.regcode}
+                // value={data?.demographic.regcode}
                 // defaultValue="05"
               />
             </Grid.Col>
@@ -164,7 +181,7 @@ const AdditionalPatientFormData = ({
                 name="provcode"
                 api={`selects/provinces?regcode=${selectedRegion || "05"}`}
                 isRequired
-                value={data?.demographic?.provcode}
+                // value={data?.demographic?.provcode}
                 // value="0505"
               />
             </Grid.Col>
@@ -175,7 +192,7 @@ const AdditionalPatientFormData = ({
                 name="ctycode"
                 api={`selects/cities?provcode=${selectedProvince || "0505"}`}
                 isRequired
-                value={data?.demographic?.ctycode}
+                // value={data?.demographic?.ctycode}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
@@ -183,28 +200,18 @@ const AdditionalPatientFormData = ({
                 label="Barangay"
                 control={control}
                 name="bgycode"
-                api={`selects/barangays?ctycode=${selectedCity}`}
+                api={`selects/barangays?ctycode=${selectedCity || "050506"}`}
                 isRequired
-                value={data?.demographic?.brg}
+                // value={data?.demographic?.brg}
               />
             </Grid.Col>
           </Grid>
           <Grid>
             <Grid.Col span={{ base: 12, md: 12, lg: 9 }}>
-              <TextInput
-                name="patstr"
-                control={control}
-                label="Street"
-                isRequired
-              />
+              <TextInput name="patstr" control={control} label="Street" />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
-              <TextInput
-                name="patzip"
-                control={control}
-                label="Zipcode"
-                isRequired
-              />
+              <TextInput name="patzip" control={control} label="Zipcode" />
             </Grid.Col>
           </Grid>
           <Divider
@@ -212,28 +219,37 @@ const AdditionalPatientFormData = ({
             labelPosition="left"
             my={10}
           />
-          <TextInput
-            name="contact_no"
-            label="Contact Number"
-            control={control}
-            isRequired
-          />
-          <TextInput
-            name="occupation"
-            label="Occupation"
-            control={control}
-            isRequired
-          />
-          <Select
-            control={control}
-            name="patempstat"
-            label="Employment Status"
-            isRequired
-            data={[
-              { value: "EMPLO", label: "EMPLOYED" },
-              { value: "UNEMP", label: "UNEMPLOYED" },
-            ]}
-          />
+          <Grid>
+            <Grid.Col span={4}>
+              <TextInput
+                name="contact_no"
+                label="Contact Number"
+                control={control}
+                isRequired
+              />
+            </Grid.Col>
+            <Grid.Col span={4}>
+              <TextInput
+                name="occupation"
+                label="Occupation"
+                control={control}
+                isRequired
+              />
+            </Grid.Col>
+            <Grid.Col span={4}>
+              <Select
+                control={control}
+                name="patempstat"
+                label="Employment Status"
+                isRequired
+                data={[
+                  { value: "EMPLO", label: "EMPLOYED" },
+                  { value: "UNEMP", label: "UNEMPLOYED" },
+                ]}
+              />
+            </Grid.Col>
+          </Grid>
+
           <Grid>
             <Grid.Col span={6}>
               <ApiSelect

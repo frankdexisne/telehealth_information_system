@@ -41,6 +41,24 @@ class PatientChiefComplaintRequest extends FormRequest
 
     public function storeRules() {
         return [
+            'regcode' => [
+                'required'
+            ],
+            'provcode' => [
+                'required'
+            ],
+            'ctycode' => [
+                'required'
+            ],
+            'bgycode' => [
+                'required'
+            ],
+            'patstr' => [
+                'nullable'
+            ],
+            'patzip' => [
+                'nullable'
+            ],
             'platform_id' => [
                 'required',
                 'exists:platforms,id'
@@ -72,6 +90,33 @@ class PatientChiefComplaintRequest extends FormRequest
                 'required',
                 'exists:patient_conditions,id'
             ]
+        ];
+    }
+
+    public function followUpRules() {
+        return [
+            'regcode' => [
+                'required'
+            ],
+            'provcode' => [
+                'required'
+            ],
+            'ctycode' => [
+                'required'
+            ],
+            'bgy' => [
+                'required'
+            ],
+            'patstr' => [
+                'nullable'
+            ],
+            'patzip' => [
+                'nullable'
+            ],
+            'platform_id' => [
+                'required',
+                'exists:platforms,id'
+            ],
         ];
     }
 }

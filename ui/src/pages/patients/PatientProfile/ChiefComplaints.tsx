@@ -10,13 +10,15 @@ import {
   Modal,
   Title,
 } from "@mantine/core";
+import { useState } from "react";
 import Swal from "sweetalert2";
-import { putRequest } from "../../../hooks/use-http";
+import { postRequest, putRequest } from "../../../hooks/use-http";
 import { plaformType } from "../../../components/patients";
 import { CHIEF_COMPLAINT_CREATE } from "../../../interfaces/PermissionList";
 import HasPermission from "../../../utils/has-permission";
 import { useDisclosure } from "@mantine/hooks";
 import LogForm from "../PatientCreate/LogForm";
+import { useNavigate } from "react-router-dom";
 
 export interface ChiefComplaintRowData {
   id: number;
@@ -35,7 +37,7 @@ interface ChiefComplaintItemProps {
   is_follow_up: 1 | 0;
   onSelect: (id: number) => void;
   showAction: boolean;
-  onCreateFollowUp: () => void;
+  onCreateFollowUp: (id: number) => void;
   platform?: plaformType;
 }
 
@@ -58,7 +60,7 @@ const ChiefComplaintItem = ({
   };
 
   const followUpHandler = () => {
-    onCreateFollowUp();
+    onCreateFollowUp(id);
     // if (platform) {
     //   Swal.fire({
     //     title: "Creating follow up?",
@@ -132,6 +134,8 @@ const ChiefComplaints = ({
   platform,
   hideAddButton = false,
 }: ChiefComplaintsProps) => {
+  const navigate = useNavigate();
+  const [selectedId, setSelectedId] = useState<number>();
   const [opened, { open, close }] = useDisclosure(false);
   const { data, pagination, isFetching, refetch } = useTable({
     endpoint: "encounters",
@@ -181,7 +185,10 @@ const ChiefComplaints = ({
             is_follow_up={chiefComplaint.is_follow_up}
             onSelect={(id) => console.log(id)}
             showAction={showAction}
-            onCreateFollowUp={() => open()}
+            onCreateFollowUp={(id) => {
+              setSelectedId(id);
+              open();
+            }}
             platform={platform}
           />
         ))}
@@ -201,7 +208,14 @@ const ChiefComplaints = ({
         title="Provide Follow Up Log"
       >
         <LogForm
-          onSubmit={() => refetch()}
+          onSubmit={(data) => {
+            putRequest(
+              `patient-chief-complaints/${selectedId}/follow-up`,
+              data
+            ).then(() => {
+              navigate("/teleclerk");
+            });
+          }}
           submitLabel="CREATE FOLLOW UP WITH LOGS"
         />
       </Modal>

@@ -32,7 +32,7 @@ const Day = ({
         if (onSelect) onSelect(date);
       }}
       className={`${onSelect && "cursor-pointer"} ${
-        active && "border-blue-500 border-2"
+        active && "border-blue-500 border-4"
       }`}
     >
       <Card.Section className="flex justify-center space-y-10 flex-col items-center min-h-[70px] pt-5">
@@ -42,9 +42,12 @@ const Day = ({
         <Title size={60} lh={0}>
           {activeDate}
         </Title>
-        <Title size={20} lh={0}>
+        <Title size={20} lh={0} mb={-10}>
           {year}
         </Title>
+        <Text c="gray" lh={0}>
+          {moment(date).format("dddd")}
+        </Text>
       </Card.Section>
 
       <div className="w-full flex justify-center items-center space-x-2 mt-4">

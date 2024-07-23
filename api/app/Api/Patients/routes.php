@@ -235,6 +235,9 @@ Route::controller(App\Api\Patients\PatientScheduleController::class)
     // ->middleware('permission:' . Permission::PATIENT_SCHEDULE_LIST)
     ->name('index');
 
+    Route::get('/schedule-by-month/{department}/{monthYear}', 'getScheduleByMonth')
+    ->name('getScheduleByMonth');
+
     Route::get('/get-departments-by-month', 'getDepartmentsByMonth')
     ->name('getDepartmentsByMonth');
 
