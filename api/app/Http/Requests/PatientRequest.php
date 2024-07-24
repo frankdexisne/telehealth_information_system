@@ -73,8 +73,8 @@ class PatientRequest extends FormRequest
             'provcode' => ['required'],
             'ctycode' => ['required'],
             'brg' => ['required'],
-            'patstr' => ['required'],
-            'patzip' => ['required'],
+            'patstr' => ['nullable'],
+            'patzip' => ['nullable'],
             'chief_complaint' => ['required'],
             'patient_condition_id' => ['required', 'exists:patient_conditions,id'],
         ];

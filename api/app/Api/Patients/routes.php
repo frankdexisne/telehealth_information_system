@@ -10,6 +10,9 @@ Route::controller(App\Api\Patients\PatientController::class)
     ->middleware('permission:' . Permission::PATIENT_LIST)
     ->name('index');
 
+    Route::post('/create-appointment', 'storeAppointment')
+    ->name('storeAppointment');
+
     Route::get('/search', 'patientSearch')
     ->middleware('permission:' . Permission::PATIENT_LIST)
     ->name('patientSearch');
@@ -51,6 +54,8 @@ Route::controller(App\Api\Patients\PatientController::class)
 
     Route::get('/{hpercode}/homis-patient','homisPatient')
     ->name('homisPatient');
+
+    
 });
 
 Route::controller(App\Api\Patients\DemographicController::class)

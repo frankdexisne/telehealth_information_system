@@ -78,21 +78,18 @@ const TeleserviceForm = ({
 
     const data = {
       ...payload,
-      log_date: logData.date,
-      log_time: logData.time,
-      informant: logData.informant,
-      platform_id: platformIds[platform],
       log_datetime: logData.date + " " + logData.time,
       not_respond: notRespond ? 1 : 0,
     };
     postRequest("/teleclerk-logs", data).then(() => {
-      Swal.fire({
-        title: "Success",
-        text: "Teleservice successfully save",
-        icon: "success",
-      }).then(() => {
-        navigate("/teleclerk");
-      });
+      navigate("/teleclerk");
+      // Swal.fire({
+      //   title: "Success",
+      //   text: "Teleservice successfully save",
+      //   icon: "success",
+      // }).then(() => {
+      //   navigate("/teleclerk");
+      // });
     });
   };
 

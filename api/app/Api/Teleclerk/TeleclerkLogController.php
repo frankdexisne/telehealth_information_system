@@ -4,12 +4,15 @@ namespace App\Api\Teleclerk;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
-use App\Models\TeleclerkLog;
+use App\Models\{TeleclerkLog, TeleservePatient, TeleserveDemographic};
 use App\Http\Requests\PatientRequest;
 use Symfony\Component\HttpFoundation\Response;
+use App\Traits\{ WebSocketTrait};
 
 class TeleclerkLogController extends ApiController
 {
+    use WebsocketTrait;
+
     public function __construct(TeleclerkLog $teleclerkLog) {
         $this->modelQuery = $teleclerkLog->query()->join('platforms', 'teleclerk_logs.platform_id', '=', 'platforms.id')
         ->select('teleclerk_logs.*', 'platforms.name AS platform_name');
@@ -50,13 +53,16 @@ class TeleclerkLogController extends ApiController
             'contact_no' => $request->contact_no,
         ]);
 
-        $teleserveDemographic = TeleserveDemographic::create([
-            'teleserve_patient_id' => $teleservePatient->id,
-            'regcode' => $request->regcode,
-            'provcode' => $request->provcode,
-            'ctycode' => $request->ctycode,
-            'patstr' => $request->patstr,
-        ]);
+        if ($request->has('regcode') || $request->has('provcode') || $request->has('ctycode') || $request->has('patstr')) {
+            $teleserveDemographic = TeleserveDemographic::create([
+                'teleserve_patient_id' => $teleservePatient->id,
+                'regcode' => $request->regcode,
+                'provcode' => $request->provcode,
+                'ctycode' => $request->ctycode,
+                'patstr' => $request->patstr,
+            ]);
+        }
+        
 
         $data = TeleclerkLog::create([
             'teleserve_patient_id' => $teleservePatient->id,
@@ -66,6 +72,8 @@ class TeleclerkLogController extends ApiController
             'inquiry' => $request->inquiry,
             'is_teleconsult' => 0,
         ]);
+
+        $this->sendEvent('created', 'Inquiry', 'Inquiry is already saved');
 
         return $this->success(['data' => $data], Response::HTTP_CREATED);
     }

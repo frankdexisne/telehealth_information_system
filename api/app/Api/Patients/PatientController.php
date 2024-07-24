@@ -249,14 +249,14 @@ class PatientController extends ApiController
                 ]
             );
 
-            Encounter::create([
+            $encounter = Encounter::create([
                 'patient_chief_complaint_id' => $patientChiefComplaint->id,
                 'call_log_id' => $callLog->id,
                 'patient_condition_id' => $request->patient_condition_id,
                 'consultation_status_id' => $request->consultation_status_id
             ]);
 
-            $teleservePatient = TeleservePatient::create([
+        $teleservePatient = TeleservePatient::create([
             'lname' => $request->lname,
             'fname' => $request->fname,
             'mname' => $request->mname,
@@ -284,25 +284,9 @@ class PatientController extends ApiController
             'encounter' => $encounter->id
         ]);
 
-            // TeleclerkLog::create([
-            //     'log_datetime' => $request->log_date . ' ' . $request->log_time,
-            //     'platform_id' => $request->platform_id,
-            //     'informant' => $request->informant,
-            //     'inquiry' => $request->chief_complaint,
-            //     'patient_lname' => $request->lname,
-            //     'patient_fname' => $request->fname,
-            //     'patient_mname' => $request->mname,
-            //     'patient_suffix' => $request->suffix,
-            //     'patient_profile_id' => $patientProfile->id,
-            //     'patient_contact_no' => $request->contact_no,
-            //     'regcode' => $request->regcode,
-            //     'provcode' => $request->provcode,
-            //     'ctycode' => $request->ctycode,
-            //     'patstr' => $request->patstr,
-            //     'is_teleconsult' => 1
-            // ]);
 
-            $this->sendEvent('created', 'New Patient', 'Patient created');
+        $this->sendEvent('created', 'New Patient', 'Patient created');
+
         });
         
         
@@ -549,6 +533,32 @@ class PatientController extends ApiController
         ->first();
         if ($hpercode) 
             return ['hperson' => $hperson, 'demographic' => $haddr];
+    }
+
+    public function storeAppointment(Request $request) {
+
+        $teleservePatient = TeleservePatient::create([
+            'lname' => $request->lname,
+            'fname' => $request->fname,
+            'mname' => $request->mname,
+            'suffix' => $request->suffix,
+            'contact_no' => $request->contact_no,
+        ]);
+
+        PatientSchedule::create([
+            'user_id' => auth()->id(),
+            'schedule_datetime' => date('Y-m-d H:i:s', strtotime($request->schedule_datetime)),
+            'schedule_status_id' => 1,
+            'reason' => 'OPD Appointment',
+            'department_id' => $request->department_id,
+            'appointmentable_type' => 'App\Models\TeleservePatient',
+            'appointmentable_id' => $teleservePatient->id
+        ]);
+
+
+         $this->sendEvent('created', 'OPD Appointment', 'Appointment is already created');
+
+        return $this->success([], Response::HTTP_NO_CONTENT);
     }
     
 }

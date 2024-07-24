@@ -9,7 +9,38 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import moment from "moment";
+import { postRequest } from "../../../hooks/use-http";
+import { useNavigate } from "react-router-dom";
+
+interface NewProfileFormData {
+  log_date: string;
+  log_time: string;
+  platform_id: number;
+  informant: string;
+  lname: string;
+  fname: string;
+  mname: string;
+  suffix: string;
+  dob: string;
+  gender: "male" | "female";
+  is_pregnant: 1 | 0;
+  patcstat: string;
+  contact_no: string;
+  occupation: string;
+  employment_status_id: string;
+  regcode: string;
+  provcode: string;
+  ctycode: string;
+  brgcode: string;
+  patstr: string;
+  patzip: string;
+  chief_complaint: string;
+  patient_condition_id: string;
+  consultation_status_id: string;
+}
+
 const NewProfileForm = () => {
+  const navigate = useNavigate();
   const civilStatuses = useSelector(
     (state: RootState) => state.select.civil_statuses
   );
@@ -22,13 +53,17 @@ const NewProfileForm = () => {
     (state: RootState) => state.select.consultation_statuses
   );
   const [disableIsPregnant, setDisableIsPregnant] = useState(true);
-  const { control, watch } = useForm();
+  const { control, watch, handleSubmit } = useForm<NewProfileFormData>();
 
   const dob = watch("dob");
   const gender = watch("gender");
   const selectedRegion = watch("regcode");
   const selectedProvince = watch("provcode");
   const selectedCity = watch("ctycode");
+
+  const createTeleconsultation = (payload: NewProfileFormData) => {
+    postRequest("/patients", payload).then(() => navigate("/teleclerk"));
+  };
 
   useEffect(() => {
     if (gender === "female") {
@@ -42,7 +77,7 @@ const NewProfileForm = () => {
   }, [dob, gender]);
   return (
     <div>
-      <form>
+      <form onSubmit={handleSubmit(createTeleconsultation)}>
         <Divider label={<Text>Teleclerk Log</Text>} labelPosition="left" />
         <Grid className="bg-slate-100 p-5 rounded-lg">
           <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
@@ -246,20 +281,10 @@ const NewProfileForm = () => {
             />
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 12, lg: 9 }}>
-            <TextInput
-              name="patstr"
-              control={control}
-              label="Street"
-              isRequired
-            />
+            <TextInput name="patstr" control={control} label="Street" />
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
-            <TextInput
-              name="patzip"
-              control={control}
-              label="Zipcode"
-              isRequired
-            />
+            <TextInput name="patzip" control={control} label="Zipcode" />
           </Grid.Col>
         </Grid>
 

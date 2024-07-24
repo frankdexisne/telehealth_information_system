@@ -20,6 +20,7 @@ import ChiefComplaintWithLogForm from "../PatientCreate/ChiefComplaintWithLogFor
 import AdditionalPatientFormData from "./AdditionalPatientFormData";
 import { ApiSelect } from "../../../components/use-form-controls";
 import ReferralForm from "./ReferralForm";
+import NewProfile from "./NewProfile";
 
 interface PatientSearchForm {
   hpercode: string;
@@ -250,7 +251,11 @@ const ReferredToOPD = () => {
             </div>
           </Stepper.Step>
           <Stepper.Step label="Final step" description="Completing Details">
-            {creating && <div>CREATE</div>}
+            {creating && (
+              <div>
+                <NewProfile />
+              </div>
+            )}
             {!creating && (
               <>
                 {!fromHOMIS && (
