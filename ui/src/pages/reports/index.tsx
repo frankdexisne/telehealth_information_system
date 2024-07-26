@@ -1,4 +1,4 @@
-import { Grid, Title, TextInput } from "@mantine/core";
+import { Grid, TextInput } from "@mantine/core";
 import moment from "moment";
 import TeleconsultationStatus from "./TeleconsultationStatus";
 import TeleserviceStatus from "./TeleserviceStatus";

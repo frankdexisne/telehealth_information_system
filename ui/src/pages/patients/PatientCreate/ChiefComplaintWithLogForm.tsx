@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import moment from "moment";
 
 export interface ChieftComplaintFormData {
   platform_id: number;
@@ -71,11 +70,6 @@ const ChiefComplaintWithLogForm = ({
     console.log(values);
   }, [values, setValue]);
 
-  // useEffect(() => {
-  //   setValue("patient_condition_id", 1);
-  //   setValue("consultation_status_id", 1);
-  // }, [setValue]);
-
   return (
     <form onSubmit={handleSubmit(chiefComplaintHandler)}>
       <Divider
@@ -101,8 +95,6 @@ const ChiefComplaintWithLogForm = ({
             name="provcode"
             api={`selects/provinces?regcode=${selectedRegion || "05"}`}
             isRequired
-            // defaultValue="0505"
-            // value="0505"
           />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
@@ -126,20 +118,10 @@ const ChiefComplaintWithLogForm = ({
       </Grid>
       <Grid>
         <Grid.Col span={{ base: 12, md: 12, lg: 9 }}>
-          <TextInput
-            name="patstr"
-            control={control}
-            label="Street"
-            // isRequired
-          />
+          <TextInput name="patstr" control={control} label="Street" />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
-          <TextInput
-            name="patzip"
-            control={control}
-            label="Zipcode"
-            // isRequired
-          />
+          <TextInput name="patzip" control={control} label="Zipcode" />
         </Grid.Col>
       </Grid>
       <Divider

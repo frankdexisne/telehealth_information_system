@@ -1,5 +1,4 @@
-import { ActionIcon, Badge, Button, Group } from "@mantine/core";
-import { DefaultRowAction } from "../../../components/tables/AppTanstackTable";
+import { ActionIcon } from "@mantine/core";
 import { TextInput } from "../../../components/use-form-controls";
 import AppTanstackTable, {
   ColumnDefinition,
@@ -9,15 +8,13 @@ import { FilterInput } from "../../../components/filters";
 import {
   IconCalendarPlus,
   IconCheck,
-  IconEdit,
   IconLock,
-  IconPlus,
   IconX,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useParams } from "react-router-dom";
 import moment from "moment";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { postRequest } from "../../../hooks";
 import Swal from "sweetalert2";
@@ -44,7 +41,7 @@ const DateField = ({ row, onSubmit }: DateFieldProps) => {
   const [opened, { open, close }] = useDisclosure(false);
   const { control, handleSubmit, setValue } = useForm<FormSchedule>();
   const setScheduleDateHandler = (payload: FormSchedule) => {
-    postRequest(`/encounters/${row.id}/set-schedule`, payload).then((res) => {
+    postRequest(`/encounters/${row.id}/set-schedule`, payload).then(() => {
       Swal.fire({
         title: "Success",
         text: "Already set schedule",
@@ -89,18 +86,7 @@ const DateField = ({ row, onSubmit }: DateFieldProps) => {
       );
 
     if (row.schedule_datetime) {
-      return (
-        // <TextInput
-        //   control={control}
-        //   name="schedule_datetitme"
-        //   type="datetime-local"
-        //   fz={8}
-        //   rightSection={<IconEdit />}
-        //   // value={moment().format("YYYY-MM-DDTHH:mm")}
-        //   // onChange={(e) => console.log(e.target.value)}
-        // />
-        row.schedule_datetime
-      );
+      return row.schedule_datetime;
     }
     return (
       <ActionIcon onClick={open}>
@@ -120,7 +106,6 @@ const Encounters = () => {
     refetchOnWindowFocus: true,
     staleTime: 0,
   });
-  const [opened, { open, close }] = useDisclosure(false);
   const columns: ColumnDefinition<EncounterRowData>[] = [
     {
       field: (row) => moment(row.created_at).format("MM/DD/YYYY HH:mm:ss"),

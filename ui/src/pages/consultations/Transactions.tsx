@@ -1,4 +1,4 @@
-import { Tabs, rem, Title, Grid, Switch } from "@mantine/core";
+import { Tabs, rem, Grid, Switch } from "@mantine/core";
 import { IconUser, IconListCheck, IconUserCog } from "@tabler/icons-react";
 import HasPermission from "../../utils/has-permission";
 import {

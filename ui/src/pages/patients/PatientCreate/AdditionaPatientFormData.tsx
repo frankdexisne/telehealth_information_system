@@ -13,7 +13,6 @@ import {
   TextInput as TextInputCore,
   Title,
   Text,
-  Loader,
 } from "@mantine/core";
 import { postRequest, errorProvider } from "../../../hooks/use-http";
 import { AxiosResponse } from "axios";

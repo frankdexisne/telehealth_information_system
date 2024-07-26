@@ -42,6 +42,7 @@ const ForAttachments = () => {
   const [openedViewer, { open: openViewer, close: closeViewer }] =
     useDisclosure(false);
   const [id, setId] = useState<number | null>(null);
+  const [encounterId, setEncounterId] = useState<number>();
 
   const {
     parameters,
@@ -65,7 +66,10 @@ const ForAttachments = () => {
               px={3}
               color="green"
               title="Upload"
-              onClick={() => openAttachment()}
+              onClick={() => {
+                openAttachment();
+                setEncounterId(row.id);
+              }}
             >
               <IconDownload />
             </Button>
@@ -183,7 +187,7 @@ const ForAttachments = () => {
         title="New Attachment"
         centered
       >
-        <AttachFile />
+        {encounterId && <AttachFile encounter_id={encounterId} />}
       </Modal>
       <Modal
         opened={openedViewer}

@@ -122,12 +122,8 @@ const TeleMedicine = lazy(() => import("./pages/telemedicine"));
 const DoctorForm = lazy(
   () => import("./pages/telemedicine/doctors/DoctorForm")
 );
-const DoctorProfile = lazy(
-  () => import("./pages/telemedicine/doctors/DoctorProfile")
-);
 const SentToHomis = lazy(() => import("./pages/consultations/SentToHomis"));
 const Schedules = lazy(() => import("./pages/patients/schedules"));
-const ScheduleDemo = lazy(() => import("./pages/schedules"));
 const Reports = lazy(() => import("./pages/reports"));
 const Settings = lazy(() => import("./pages/settings"));
 const Users = lazy(() => import("./pages/settings/users"));
@@ -371,11 +367,6 @@ const routes: AppRouteProps[] = [
   {
     path: "/schedules",
     Component: Schedules,
-    isPrivate: true,
-  },
-  {
-    path: "/schedule-demo",
-    Component: ScheduleDemo,
     isPrivate: true,
   },
   {

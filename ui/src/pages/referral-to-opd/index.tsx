@@ -5,8 +5,6 @@ import AppTanstackTable, {
 import { useFilter, useTable } from "../../hooks";
 import { FilterInput } from "../../components/filters";
 import { Button, Grid } from "@mantine/core";
-import { useEffect, useState } from "react";
-import moment, { Moment } from "moment";
 import { NavLink } from "react-router-dom";
 
 export interface DepartmentRowData {
@@ -18,16 +16,12 @@ export interface DepartmentRowData {
 }
 
 const ReferralToOPD = () => {
-  const [selectedDate, setSelectedDate] = useState<Moment>(moment());
-  const { debouncedParameters, parameters, inputChangeHandler, setParameters } =
-    useFilter();
-  const { data, pagination, isFetching, refetch } = useTable({
+  const { debouncedParameters, parameters, inputChangeHandler } = useFilter();
+  const { data, pagination, isFetching } = useTable({
     endpoint: `patient-schedules/reffered/to-opd`,
     pageSize: 5,
     parameters: {
       ...debouncedParameters,
-      schedule_datetime:
-        parameters.schedule_datetime || selectedDate.format("YYYY-MM-DD"),
     },
   });
 
@@ -39,10 +33,8 @@ const ReferralToOPD = () => {
         <FilterInput
           type="date"
           name="schedule_datetime"
-          value={
-            parameters.schedule_datetime || selectedDate.format("YYYY-MM-DD")
-          }
           onChange={inputChangeHandler}
+          value={parameters.date}
         />
       ),
     },

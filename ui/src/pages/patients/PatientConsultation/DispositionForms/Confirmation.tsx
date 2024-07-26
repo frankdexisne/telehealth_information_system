@@ -1,4 +1,4 @@
-import { Alert, Group, Button, Checkbox } from "@mantine/core";
+import { Alert, Checkbox } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { putRequest } from "../../../../hooks";
 
@@ -58,12 +58,6 @@ const Confirmation = ({
         />{" "}
         <span className="ml-3">{question}</span>
       </div>
-      {/* <Group my={15} className="w-full flex justify-center">
-        <Button color="green" onClick={confirmationHandler}>
-          YES
-        </Button>
-        <Button color="gray">NO</Button>
-      </Group> */}
     </Alert>
   );
 };

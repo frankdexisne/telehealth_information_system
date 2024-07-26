@@ -18,6 +18,10 @@ import { IconCheck, IconSearch } from "@tabler/icons-react";
 import ChiefComplaints from "../patients/PatientProfile/ChiefComplaints";
 import ChiefComplaintWithLogForm from "../patients/PatientCreate/ChiefComplaintWithLogForm";
 import AdditionalPatientFormData from "../patients/PatientCreate/AdditionaPatientFormData";
+import {
+  SearchViaHospNoType,
+  SearchViaNameType,
+} from "../../components/patients";
 
 interface PatientSearchForm {
   hpercode: string;
@@ -46,7 +50,7 @@ const DemographicItem = ({
 };
 
 const PatientInformation = ({ id }: { id: number }) => {
-  const { data, isFetching, isError, refetch } = usePatient({
+  const { data, isFetching } = usePatient({
     id: id,
   });
 
@@ -179,12 +183,13 @@ const PatientSearch = ({ onSearch }: PatientSearchProps) => {
 
 const CreateReferralToOPD = () => {
   const [active, setActive] = useState(0);
-  const [creating, setCreating] = useState(false);
   const [isFollowUp, setIsFollowUp] = useState<boolean>(false);
   const [fromHOMIS, setFromHOMIS] = useState<boolean>(false);
   const [hpercode, setHpercode] = useState<string>();
   const [selectedId, setSelectedId] = useState<number>();
-  const [searchFilter, setSeachFilter] = useState<PatientSearchForm>();
+  const [searchFilter, setSeachFilter] = useState<
+    PatientSearchForm | SearchViaHospNoType | SearchViaNameType
+  >();
   const nextStep = () =>
     setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
@@ -218,29 +223,30 @@ const CreateReferralToOPD = () => {
             </div>
           </Stepper.Step>
           <Stepper.Step label="Second step" description="Select Patient">
-            <PatientResult
-              filter={searchFilter}
-              searched={searchFilter !== null}
-              onCreate={() => {
-                nextStep();
-                setCreating(false);
-                setFromHOMIS(false);
-                setSelectedId(undefined);
-              }}
-              onSelect={(id) => {
-                nextStep();
-                setCreating(false);
-                setFromHOMIS(false);
-                setSelectedId(id);
-              }}
-              onSelectFromHOMIS={(hpercode) => {
-                setHpercode(hpercode);
-                setCreating(false);
-                setSelectedId(undefined);
-                setFromHOMIS(true);
-                nextStep();
-              }}
-            />
+            {searchFilter && (
+              <PatientResult
+                filter={searchFilter}
+                searched={searchFilter !== null}
+                onCreate={() => {
+                  nextStep();
+
+                  setFromHOMIS(false);
+                  setSelectedId(undefined);
+                }}
+                onSelect={(id) => {
+                  nextStep();
+                  setFromHOMIS(false);
+                  setSelectedId(id);
+                }}
+                onSelectFromHOMIS={(hpercode) => {
+                  setHpercode(hpercode);
+                  setSelectedId(undefined);
+                  setFromHOMIS(true);
+                  nextStep();
+                }}
+                onSearch={() => {}}
+              />
+            )}
             <div className="flex justify-center py-3">
               <Button onClick={() => prevStep()} w={300} color="gray">
                 SEARCH AGAIN
@@ -291,7 +297,7 @@ const CreateReferralToOPD = () => {
                     <>
                       <ChiefComplaints
                         patient_profile_id={selectedId!}
-                        onCreate={() => setCreating(true)}
+                        onCreate={() => {}}
                         showAction={true}
                         platform="facebook/messenger"
                         hideAddButton
@@ -304,9 +310,7 @@ const CreateReferralToOPD = () => {
                         Patient Chief Complaint Details
                       </Title>
                       <ChiefComplaintWithLogForm
-                        onBack={() => {
-                          setCreating(false);
-                        }}
+                        onBack={() => {}}
                         submitLabel="SUBMIT"
                         backLabel="CANCEL"
                         onSubmit={(payload) => console.log(payload)}
@@ -323,7 +327,7 @@ const CreateReferralToOPD = () => {
                 {hpercode && (
                   <AdditionalPatientFormData
                     hpercode={hpercode}
-                    onSubmit={(res) => {}}
+                    onSubmit={() => {}}
                     onCancel={() => {
                       setActive(0);
                     }}
@@ -336,13 +340,6 @@ const CreateReferralToOPD = () => {
             Completed, click back button to get to previous step
           </Stepper.Completed>
         </Stepper>
-
-        {/* <Group justify="center" mt="xl">
-          <Button variant="default" onClick={prevStep}>
-            Back
-          </Button>
-          <Button onClick={nextStep}>Next step</Button>
-        </Group> */}
       </Paper>
     </div>
   );

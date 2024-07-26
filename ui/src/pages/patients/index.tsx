@@ -1,4 +1,4 @@
-import { Button, Grid, Modal, Tooltip, Center } from "@mantine/core";
+import { Button, Grid, Tooltip, Center } from "@mantine/core";
 import { DefaultRowAction } from "../../components/tables/AppTanstackTable";
 import AppTanstackTable, {
   ColumnDefinition,
@@ -11,17 +11,12 @@ import { ButtonGroup } from "@mantine/core";
 import { IconEye, IconUserMinus, IconUnlink } from "@tabler/icons-react";
 import HasPermission from "../../utils/has-permission";
 import { IconUserPlus } from "@tabler/icons-react";
-import { useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import PatientBinding from "./PatientProfile/PatientBinding";
 import { NavLink, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import moment from "moment";
 import {
   PATIENT_CREATE,
   PATIENT_UPDATE,
   PATIENT_DELETE,
-  PATIENT_BIND,
 } from "../../interfaces/PermissionList";
 import PageHeader from "../../components/base/PageHeader";
 import Faqs from "../../components/faqs";
@@ -38,15 +33,6 @@ export interface PatientRowData {
   address?: string;
 }
 
-interface FilterMappingProps {
-  id?: number;
-  lname: string;
-  fname: string;
-  mname: string;
-  gender: "male" | "female";
-  address?: string;
-}
-
 const Patients = () => {
   const {
     parameters,
@@ -60,16 +46,7 @@ const Patients = () => {
     parameters: debouncedParameters,
   });
 
-  const [mappingFIlter, setMappingFilter] = useState<FilterMappingProps>({
-    lname: "",
-    fname: "",
-    mname: "",
-    gender: "male",
-    address: "",
-  });
-
   const navigate = useNavigate();
-  const [opened, { open, close }] = useDisclosure(false);
 
   const columns: ColumnDefinition<PatientRowData>[] = [
     {
@@ -239,34 +216,6 @@ const Patients = () => {
           </div>
         }
       />
-      {HasPermission(PATIENT_BIND) && (
-        <Modal
-          opened={opened}
-          onClose={close}
-          title="MAP/BIND TO HOMIS"
-          size="80%"
-          centered
-        >
-          {mappingFIlter.id && (
-            <PatientBinding
-              id={mappingFIlter.id}
-              gender={mappingFIlter.gender}
-              lname={mappingFIlter.lname}
-              fname={mappingFIlter.fname}
-              mname={mappingFIlter.mname}
-              address={mappingFIlter.address}
-              onCancel={() => close()}
-              onBinded={() => {
-                Swal.fire({
-                  title: "Success",
-                  text: "Patient is already bind to iHOMIS",
-                  icon: "success",
-                });
-              }}
-            />
-          )}
-        </Modal>
-      )}
     </div>
   );
 };

@@ -67,10 +67,9 @@ const ScheduleRow = ({
 
 const ScheduleForm = ({ values, onSubmit, onCancel }: ScheduleFormProps) => {
   const queryClient = useQueryClient();
-  const { control, handleSubmit, setError, setValue } =
-    useForm<ScheduleFormData>({
-      defaultValues: defaultValues,
-    });
+  const { handleSubmit, setError, setValue } = useForm<ScheduleFormData>({
+    defaultValues: defaultValues,
+  });
 
   const saveUserHandler = (payload: ScheduleFormData) => {
     if (values?.id) {

@@ -6,30 +6,19 @@ import {
   Group,
   Text,
   ActionIcon,
-  Divider,
   Loader,
   Title,
   Pagination,
 } from "@mantine/core";
-import AppTanstackTable, {
-  ColumnDefinition,
-} from "../../../components/tables/AppTanstackTable";
 import { useTable, useFilter } from "../../../hooks";
-import { FilterInput } from "../../../components/filters";
 import {
-  IconPlus,
-  IconCheck,
-  IconX,
   IconId,
   IconPhoneCall,
   IconUser,
-  IconLocation,
-  IconSelect,
   IconArrowRight,
   IconUserPlus,
   IconSearch,
 } from "@tabler/icons-react";
-import { useDisclosure } from "@mantine/hooks";
 import MalePatientAvatar from "../../../assets/male_patient_avatar.png";
 import FemalePatientAvatar from "../../../assets/female_patient_avatar.png";
 import classes from "../PatientProfile/ProfileHeader.module.css";

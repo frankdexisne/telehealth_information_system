@@ -10,12 +10,18 @@ import ChiefComplaintForm, {
 import LogForm, { LogFormData } from "./LogForm";
 import { Loader } from "@mantine/core";
 import { postRequest } from "../../../hooks";
-import { LogData } from ".";
 import { plaformType } from "../../../components/patients";
 import moment from "moment";
 
+interface LogData {
+  log_date: string;
+  log_time: string;
+  informant: string;
+  platform: string;
+}
+
 interface FormDataProps {
-  log: LogFormData;
+  log: LogData;
   profile: ProfilingFormData;
   demographic: DemographicFormData;
   chief_complaint: ChieftComplaintFormData;
@@ -26,7 +32,7 @@ interface PatientProfilingProps {
   lname: string;
   fname: string;
   mname: string;
-  logData: LogData;
+  logData: Partial<LogFormData>;
   platform: plaformType;
 }
 
@@ -35,7 +41,6 @@ const PatientProfiling = ({
   lname,
   fname,
   mname,
-  logData,
   platform,
 }: PatientProfilingProps) => {
   const [active, setActive] = useState(0);
@@ -61,7 +66,7 @@ const PatientProfiling = ({
       occupation: "",
       civil_status: "",
       contact_no: "",
-      informant: logData.informant,
+      informant: "",
       patempstat: "",
       patcstat: "",
     },
@@ -91,8 +96,8 @@ const PatientProfiling = ({
       ...payload.profile,
       ...payload.demographic,
       ...payload.chief_complaint,
-      log_date: logData.date,
-      log_time: logData.time,
+      log_date: payload.log.log_date,
+      log_time: payload.log.log_time,
       platform_id: platformIds[platform],
     };
     postRequest("/patients", data).then(() => {
@@ -114,7 +119,7 @@ const PatientProfiling = ({
           allowStepSelect={false}
         >
           <LogForm
-            values={formData.log}
+            values={{ ...formData.log, regcode: "", provcode: "", ctycode: "" }}
             onSubmit={(payload) => {
               setFormData({
                 ...formData,

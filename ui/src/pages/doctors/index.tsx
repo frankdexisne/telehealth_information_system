@@ -1,4 +1,4 @@
-import { Tabs, rem, Title, Grid, Switch } from "@mantine/core";
+import { Tabs, rem, Grid, Switch } from "@mantine/core";
 import {
   IconArrowForward,
   IconPhoneCall,

@@ -19,6 +19,7 @@ export interface ProfilingFormData {
   contact_no: string;
   patempstat: string;
   patcstat: string;
+  informant: string;
 }
 
 interface PatientInformationFormProps {

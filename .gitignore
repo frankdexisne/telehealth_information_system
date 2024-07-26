@@ -1,5 +1,6 @@
 api/node_modules
 api/public/storage
+api/public/patient_chief_complaints
 api/storage/*.key
 api/vendor
 api/.env

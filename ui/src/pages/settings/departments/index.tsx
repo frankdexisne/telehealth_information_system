@@ -22,11 +22,6 @@ import {
   DEPARTMENT_DELETE,
 } from "../../../interfaces/PermissionList";
 
-interface DayProps {
-  id: number;
-  name: string;
-}
-
 export interface DepartmentRowData {
   id: number;
   name: string;

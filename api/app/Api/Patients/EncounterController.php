@@ -137,6 +137,9 @@ class EncounterController extends ApiController
             'schedule_status_id' => 1,
             'reason' => 'FACE TO FACE SCHEDULE',
             'schedule_datetime' => date('Y-m-d H:i:s',strtotime($request->schedule_datetime)),
+            'appointmentable_type' => 'App\\Models\PatientProfile',
+            'appointmentable_id' =>  $encounter->patientChiefComplaint->patient_profile_id,
+            'encounter_id' => $encounter->id
         ]);
 
         return $this->success(['patientSchedule' => $patientSchedule], Response::HTTP_OK);

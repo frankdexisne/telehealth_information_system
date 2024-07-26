@@ -28,7 +28,6 @@ import { notifications, Notifications } from "@mantine/notifications";
 import socket from "../socket";
 import { useQueryClient } from "@tanstack/react-query";
 import logo from "../assets/brhmclogo.png";
-import { useMediaQuery } from "@mantine/hooks";
 
 interface HandlerProps {
   title: string;
@@ -36,7 +35,6 @@ interface HandlerProps {
 }
 
 function DefaultLayout({ children }: PropsWithChildren) {
-  const isMobile = useMediaQuery("max-width:481px");
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();

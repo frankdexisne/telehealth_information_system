@@ -7,7 +7,11 @@ import PatientProfiling from "./PatientProfiling";
 import moment from "moment";
 import CreateConsultationDetail from "./CreateConsultationDetail";
 import { postRequest } from "../../../hooks";
-import { ChieftComplaintFormData } from "../../../types/chief-complaint";
+import { ChieftComplaintFormData } from "./ChiefComplaintWithLogForm";
+import {
+  SearchViaHospNoType,
+  SearchViaNameType,
+} from "../../../components/patients";
 
 export interface PatientFilter {
   hpercode?: string;
@@ -22,8 +26,6 @@ const Teleconsulting = () => {
   ] = useDisclosure(false);
   const [patientId, setPatientId] = useState<number>();
   const [isProceed, setIsProceed] = useState<boolean>(false);
-  const [selectedPlatform, setSelectedPlatform] =
-    useState<string>("facebook/messenger");
   const [patient, setPatient] = useState<PatientFilter>({
     hpercode: undefined,
     fname: undefined,
@@ -32,27 +34,17 @@ const Teleconsulting = () => {
   });
 
   const saveChiefComplaintHandler = (payload: ChieftComplaintFormData) => {
-    const plaformIds = {
-      call: 1,
-      "facebook/messenger": 2,
-      radio: 3,
-      viber: 4,
-    };
-
-    const platformId = 2;
-
     const formData = {
       ...payload,
       log_date: moment().format("YYYY-MM-DD"),
       log_time: moment().format("HH:mm"),
-      informant: "Test",
-      platform_id: platformId,
+      informant: payload.informant,
+      platform_id: payload.platform_id,
     };
 
     postRequest(`/patient-chief-complaints/${patientId}`, formData).then(() => {
       setPatientId(undefined);
       setIsProceed(false);
-      setSelectedPlatform("facebook/messenger");
     });
   };
   return (
@@ -73,25 +65,28 @@ const Teleconsulting = () => {
             </Paper>
           </Grid.Col>
           <Grid.Col span={9}>
-            <PatientResult
-              searched={
-                patient.hpercode !== undefined ||
-                patient.fname !== undefined ||
-                patient.mname !== undefined ||
-                patient.lname !== undefined
-              }
-              filter={patient}
-              onCreate={() => {
-                openCreatePatient();
-              }}
-              onSearch={() => {
-                open();
-              }}
-              onSelect={(id) => {
-                setPatientId(id);
-                setIsProceed(true);
-              }}
-            />
+            {patient && (
+              <PatientResult
+                searched={
+                  patient.hpercode !== undefined ||
+                  patient.fname !== undefined ||
+                  patient.mname !== undefined ||
+                  patient.lname !== undefined
+                }
+                filter={patient as SearchViaHospNoType | SearchViaNameType}
+                onCreate={() => {
+                  openCreatePatient();
+                }}
+                onSearch={() => {
+                  open();
+                }}
+                onSelect={(id) => {
+                  setPatientId(id);
+                  setIsProceed(true);
+                }}
+                onSelectFromHOMIS={() => {}}
+              />
+            )}
           </Grid.Col>
         </Grid>
       )}
@@ -118,8 +113,8 @@ const Teleconsulting = () => {
           fname={patient?.fname || ""}
           mname={patient?.mname || ""}
           logData={{
-            date: moment().format("YYYY-MM-DD"),
-            time: moment().format("HH:mm"),
+            log_date: moment().format("YYYY-MM-DD"),
+            log_time: moment().format("HH:mm"),
             informant: "Test",
           }}
           platform="facebook/messenger"

@@ -1,5 +1,4 @@
 import { Accordion } from "@mantine/core";
-import faqVideo1 from "../../../assets/faq-videos/tele-anchors/TRIAGING A PATIENT.mov";
 import TriageToDepartment from "../../../assets/faq-videos/tele-anchors/TRIAGE A PATIENT TO DEPARTMENT.mov";
 const TeleAnchors = () => {
   return (

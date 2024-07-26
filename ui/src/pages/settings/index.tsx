@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Tabs, rem, Title } from "@mantine/core";
+import { Tabs, rem } from "@mantine/core";
 import { IconUser, IconListCheck, IconUserCog } from "@tabler/icons-react";
 import HasPermission from "../../utils/has-permission";
 import {

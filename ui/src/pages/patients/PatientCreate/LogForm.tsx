@@ -31,8 +31,6 @@ interface LogFormProps {
 
 const LogForm = ({
   values,
-  onBack,
-  hideBackButton = false,
   onSubmit,
   submitLabel = "Next Step",
   submitPosition = "center",

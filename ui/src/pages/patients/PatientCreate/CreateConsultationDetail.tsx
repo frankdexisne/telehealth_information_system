@@ -1,18 +1,16 @@
 import ProfileHeader from "../PatientProfile/ProfileHeader";
 import ChiefComplaints from "../PatientProfile/ChiefComplaints";
 import ChiefComplaintWithLogForm, {
-  ChieftComplaintWithLogFormData,
+  ChieftComplaintFormData,
 } from "./ChiefComplaintWithLogForm";
 import { useEffect, useState } from "react";
-import { Grid, Loader, Paper, Button, Stepper } from "@mantine/core";
+import { Grid, Loader, Paper, Button } from "@mantine/core";
 import { IconInfoCircle, IconSearch } from "@tabler/icons-react";
 import MatchPatients from "../HomisPatients/MatchPatients";
 import DemographicForm from "./DemographicForm";
 import { postRequest, putRequest, usePatient } from "../../../hooks";
 import Swal from "sweetalert2";
 import { plaformType } from "../../../components/patients";
-import LogForm, { LogFormData } from "./LogForm";
-import moment from "moment";
 
 interface CreateConsultationDetailProps {
   id: number;
@@ -27,11 +25,6 @@ const CreateConsultationDetail = ({
   onSubmit,
   platform,
 }: CreateConsultationDetailProps) => {
-  const [active, setActive] = useState(0);
-  const nextStep = () =>
-    setActive((current) => (current < 3 ? current + 1 : current));
-  const prevStep = () =>
-    setActive((current) => (current > 0 ? current - 1 : current));
   const { data, isFetching, isError, refetch } = usePatient({
     id: id,
   });

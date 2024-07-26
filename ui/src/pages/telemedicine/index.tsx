@@ -1,4 +1,4 @@
-import { Tabs, rem, Title, Grid } from "@mantine/core";
+import { Tabs, rem, Grid } from "@mantine/core";
 import { IconUser, IconChecklist, IconProgress } from "@tabler/icons-react";
 import ActiveConsultations from "./consultations/ActiveConsultations";
 import CompletedConsultations from "./consultations/CompletedConsultations";

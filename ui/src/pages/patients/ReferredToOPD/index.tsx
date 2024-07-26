@@ -3,7 +3,6 @@ import {
   Button,
   Paper,
   Stepper,
-  Title,
   Loader,
   Divider,
   InputLabel,
@@ -14,11 +13,8 @@ import PatientResult from "../PatientCreate/PatientResult";
 import PageHeader from "../../../components/base/PageHeader";
 import ProfileHeader from "../../patients/PatientProfile/ProfileHeader";
 import { usePatient } from "../../../hooks";
-import { IconCheck, IconSearch } from "@tabler/icons-react";
-import ChiefComplaints from "../../patients/PatientProfile/ChiefComplaints";
-import ChiefComplaintWithLogForm from "../PatientCreate/ChiefComplaintWithLogForm";
+import { IconSearch } from "@tabler/icons-react";
 import AdditionalPatientFormData from "./AdditionalPatientFormData";
-import { ApiSelect } from "../../../components/use-form-controls";
 import ReferralForm from "./ReferralForm";
 import NewProfile from "./NewProfile";
 
@@ -49,7 +45,7 @@ const DemographicItem = ({
 };
 
 const PatientInformation = ({ id }: { id: number }) => {
-  const { data, isFetching, isError, refetch } = usePatient({
+  const { data, isFetching } = usePatient({
     id: id,
   });
 
@@ -183,7 +179,6 @@ const PatientSearch = ({ onSearch }: PatientSearchProps) => {
 const ReferredToOPD = () => {
   const [active, setActive] = useState(0);
   const [creating, setCreating] = useState(false);
-  const [isFollowUp, setIsFollowUp] = useState<boolean>(false);
   const [fromHOMIS, setFromHOMIS] = useState<boolean>(false);
   const [hpercode, setHpercode] = useState<string>();
   const [selectedId, setSelectedId] = useState<number>();
@@ -198,9 +193,7 @@ const ReferredToOPD = () => {
         <div className="w-[50%]">
           <PageHeader title="OUT PATIENT DEPARTMENT APPOINTMENT" />
         </div>
-        <div className="w-[50%] flex justify-end items-center">
-          {/* <Title size={18}>(Teleconsultation)</Title> */}
-        </div>
+        <div className="w-[50%] flex justify-end items-center"></div>
       </div>
       <Paper shadow="xl" p="lg">
         <Stepper
@@ -221,29 +214,32 @@ const ReferredToOPD = () => {
             </div>
           </Stepper.Step>
           <Stepper.Step label="Second step" description="Select Patient">
-            <PatientResult
-              filter={searchFilter}
-              searched={searchFilter !== null}
-              onCreate={() => {
-                nextStep();
-                setCreating(true);
-                setFromHOMIS(false);
-                setSelectedId(undefined);
-              }}
-              onSelect={(id) => {
-                nextStep();
-                setCreating(false);
-                setFromHOMIS(false);
-                setSelectedId(id);
-              }}
-              onSelectFromHOMIS={(hpercode) => {
-                setHpercode(hpercode);
-                setCreating(false);
-                setSelectedId(undefined);
-                setFromHOMIS(true);
-                nextStep();
-              }}
-            />
+            {searchFilter && (
+              <PatientResult
+                filter={searchFilter}
+                searched={searchFilter !== null}
+                onCreate={() => {
+                  nextStep();
+                  setCreating(true);
+                  setFromHOMIS(false);
+                  setSelectedId(undefined);
+                }}
+                onSelect={(id) => {
+                  nextStep();
+                  setCreating(false);
+                  setFromHOMIS(false);
+                  setSelectedId(id);
+                }}
+                onSelectFromHOMIS={(hpercode) => {
+                  setHpercode(hpercode);
+                  setCreating(false);
+                  setSelectedId(undefined);
+                  setFromHOMIS(true);
+                  nextStep();
+                }}
+                onSearch={() => {}}
+              />
+            )}
             <div className="flex justify-center py-3">
               <Button onClick={() => prevStep()} w={300} color="gray">
                 SEARCH AGAIN
@@ -287,7 +283,7 @@ const ReferredToOPD = () => {
                     {hpercode && (
                       <AdditionalPatientFormData
                         hpercode={hpercode}
-                        onSubmit={(res) => {}}
+                        onSubmit={() => {}}
                         onCancel={() => {
                           setActive(0);
                         }}
@@ -302,13 +298,6 @@ const ReferredToOPD = () => {
             Completed, click back button to get to previous step
           </Stepper.Completed>
         </Stepper>
-
-        {/* <Group justify="center" mt="xl">
-          <Button variant="default" onClick={prevStep}>
-            Back
-          </Button>
-          <Button onClick={nextStep}>Next step</Button>
-        </Group> */}
       </Paper>
     </div>
   );

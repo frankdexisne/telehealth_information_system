@@ -7,7 +7,6 @@ import {
   Loader,
   Divider,
   InputLabel,
-  Text,
   Alert,
 } from "@mantine/core";
 import { useState } from "react";
@@ -27,6 +26,10 @@ import ChiefComplaintWithLogForm, {
 } from "./ChiefComplaintWithLogForm";
 import AdditionalPatientFormData from "./AdditionaPatientFormData";
 import { useNavigate } from "react-router-dom";
+import {
+  SearchViaHospNoType,
+  SearchViaNameType,
+} from "../../../components/patients";
 import NewProfileForm from "./NewProfileForm";
 
 interface PatientSearchForm {
@@ -56,7 +59,7 @@ const DemographicItem = ({
 };
 
 const PatientInformation = ({ id }: { id: number }) => {
-  const { data, isFetching, isError, refetch } = usePatient({
+  const { data, isFetching } = usePatient({
     id: id,
   });
 
@@ -212,7 +215,9 @@ const PatientCreate = () => {
   const [fromHOMIS, setFromHOMIS] = useState<boolean>(false);
   const [hpercode, setHpercode] = useState<string>();
   const [selectedId, setSelectedId] = useState<number>();
-  const [searchFilter, setSeachFilter] = useState<PatientSearchForm>();
+  const [searchFilter, setSeachFilter] = useState<
+    PatientSearchForm | SearchViaHospNoType | SearchViaNameType
+  >();
   const [selectedPatient, setSelectedPatient] =
     useState<Partial<ChieftComplaintFormData>>();
   const nextStep = () =>
@@ -248,30 +253,33 @@ const PatientCreate = () => {
             </div>
           </Stepper.Step>
           <Stepper.Step label="Second step" description="Select Patient">
-            <PatientResult
-              filter={searchFilter}
-              searched={searchFilter !== null}
-              onCreate={() => {
-                nextStep();
-                setCreating(true);
-                setFromHOMIS(false);
-                setSelectedId(undefined);
-              }}
-              onSelect={(id, data) => {
-                nextStep();
-                setCreating(false);
-                setFromHOMIS(false);
-                setSelectedId(id);
-                setSelectedPatient(data);
-              }}
-              onSelectFromHOMIS={(hpercode) => {
-                setHpercode(hpercode);
-                setCreating(false);
-                setSelectedId(undefined);
-                setFromHOMIS(true);
-                nextStep();
-              }}
-            />
+            {searchFilter && (
+              <PatientResult
+                filter={searchFilter}
+                searched={searchFilter !== null}
+                onCreate={() => {
+                  nextStep();
+                  setCreating(true);
+                  setFromHOMIS(false);
+                  setSelectedId(undefined);
+                }}
+                onSelect={(id, data) => {
+                  nextStep();
+                  setCreating(false);
+                  setFromHOMIS(false);
+                  setSelectedId(id);
+                  setSelectedPatient(data);
+                }}
+                onSelectFromHOMIS={(hpercode) => {
+                  setHpercode(hpercode);
+                  setCreating(false);
+                  setSelectedId(undefined);
+                  setFromHOMIS(true);
+                  nextStep();
+                }}
+                onSearch={() => {}}
+              />
+            )}
             <div className="flex justify-center py-3">
               <Button onClick={() => prevStep()} w={300} color="gray">
                 SEARCH AGAIN
@@ -345,7 +353,7 @@ const PatientCreate = () => {
                               regcode: selectedPatient?.regcode,
                               provcode: selectedPatient?.provcode,
                               ctycode: selectedPatient?.ctycode,
-                              bgycode: selectedPatient?.brg,
+                              bgycode: selectedPatient?.bgycode,
                             }}
                             submitLabel="SUBMIT"
                             backLabel="CANCEL"
@@ -370,7 +378,7 @@ const PatientCreate = () => {
                     {hpercode && (
                       <AdditionalPatientFormData
                         hpercode={hpercode}
-                        onSubmit={(res) => {}}
+                        onSubmit={() => {}}
                         onCancel={() => {
                           setActive(0);
                         }}

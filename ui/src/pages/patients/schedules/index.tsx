@@ -1,14 +1,4 @@
-import {
-  Grid,
-  Paper,
-  TextInput,
-  Title,
-  Card,
-  Badge,
-  Text,
-  Divider,
-  Loader,
-} from "@mantine/core";
+import { Grid, Paper, Title, Card, Badge, Text, Divider } from "@mantine/core";
 import PageHeader from "../../../components/base/PageHeader";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -139,7 +129,7 @@ const DepartmentList = ({
 }) => {
   const [selectedId, setSelectedId] = useState<number>();
 
-  const { data, isFetching, isFetched } = useTable({
+  const { data } = useTable({
     endpoint: "patient-schedules/get-departments-by-month",
     pageSize: 50,
     parameters: {
@@ -165,6 +155,11 @@ const DepartmentList = ({
   );
 };
 
+interface DateProps {
+  schedule_date: string;
+  scheduled: number;
+}
+
 const ScheduleDatesList = ({
   monthYear,
   departmentId,
@@ -177,15 +172,7 @@ const ScheduleDatesList = ({
   activeDate: string;
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [dates, setDates] = useState([]);
-  // const { data, isFetching, isFetched } = useTable({
-  //   endpoint: "patient-schedules/get-scheduled-dates-by-department-and-month",
-  //   pageSize: 31,
-  //   parameters: {
-  //     monthYear: monthYear,
-  //     department_id: departmentId,
-  //   },
-  // });
+  const [dates, setDates] = useState<DateProps[]>([]);
 
   useEffect(() => {
     const fetchDatesTimeout = setTimeout(() => {
@@ -283,77 +270,7 @@ const Schedules = () => {
                 activeDate={activeDate}
               />
             )}
-            {/* <div className="w-full flex overflow-x-scroll space-x-2 px-2 pb-4 scrollbars">
-              <div className="min-w-[160px] w-[160px]">
-                <Day
-                  date={new Date()}
-                  scheduled={10}
-                  dailyLimit={0}
-                  hideAction
-                  onSelect={(date) => {
-                    console.log("test", date);
-                    setSelectedDate(date);
-                  }}
-                  active={true}
-                />
-              </div>
-              <div className="min-w-[160px] w-[160px]">
-                <Day
-                  date={new Date()}
-                  scheduled={10}
-                  dailyLimit={0}
-                  hideAction
-                />
-              </div>
-              <div className="min-w-[160px] w-[160px]">
-                <Day
-                  date={new Date()}
-                  scheduled={10}
-                  dailyLimit={0}
-                  hideAction
-                />
-              </div>
-              <div className="min-w-[160px] w-[160px]">
-                <Day
-                  date={new Date()}
-                  scheduled={10}
-                  dailyLimit={0}
-                  hideAction
-                />
-              </div>
-              <div className="min-w-[160px] w-[160px]">
-                <Day
-                  date={new Date()}
-                  scheduled={10}
-                  dailyLimit={0}
-                  hideAction
-                />
-              </div>
-              <div className="min-w-[160px] w-[160px]">
-                <Day
-                  date={new Date()}
-                  scheduled={10}
-                  dailyLimit={0}
-                  hideAction
-                />
-              </div>
-              <div className="min-w-[160px] w-[160px]">
-                <Day
-                  date={new Date()}
-                  scheduled={10}
-                  dailyLimit={0}
-                  hideAction
-                />
-              </div>
-              <div className="min-w-[160px] w-[160px]">
-                <Day
-                  date={new Date()}
-                  scheduled={10}
-                  dailyLimit={0}
-                  hideAction
-                />
-              </div>
-            </div> */}
+
             <Divider
               my={7}
               label={<Text>Scheduled Patients</Text>}

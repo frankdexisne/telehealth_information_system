@@ -3,7 +3,6 @@ import { TextInput, Select } from "../../../components/use-form-controls";
 import { Button, ButtonGroup } from "@mantine/core";
 import { AxiosResponse, AxiosError } from "axios";
 import { postRequest, errorProvider } from "../../../hooks";
-import { useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 interface ScheduleFormProps {
@@ -22,7 +21,6 @@ const ScheduleForm = ({ onSubmit, onCancel }: ScheduleFormProps) => {
   const departments = useSelector(
     (state: RootState) => state.select.departments
   );
-  const queryClient = useQueryClient();
   const { control, handleSubmit, setError } = useForm<PatientScheduleFormData>({
     defaultValues: {
       reason: "REFFERED TO OPD",

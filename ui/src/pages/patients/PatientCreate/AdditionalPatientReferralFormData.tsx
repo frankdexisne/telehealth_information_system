@@ -1,14 +1,8 @@
 import { useForm } from "react-hook-form";
-import {
-  TextInput,
-  Select,
-  ApiSelect,
-} from "../../../components/use-form-controls";
-import { Button, ButtonGroup, Grid, Group } from "@mantine/core";
+import { TextInput, ApiSelect } from "../../../components/use-form-controls";
+import { Button, ButtonGroup } from "@mantine/core";
 import { postRequest, errorProvider } from "../../../hooks/use-http";
 import { AxiosResponse } from "axios";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
 import ProfileHeader from "../PatientProfile/ProfileHeader";
 import { useHomisPatient } from "../../../hooks";
 import moment from "moment";
@@ -37,15 +31,8 @@ const AdditionalPatientReferralFormData = ({
   onSubmit,
 }: AdditionalPatientReferralFormDataProps) => {
   const [disableDepartment, setDisableDepartment] = useState<boolean>(true);
-  const patientConditions = useSelector(
-    (state: RootState) => state.select.patient_conditions
-  );
-  const consultationStatuses = useSelector(
-    (state: RootState) => state.select.consultation_statuses
-  );
-  const { control, handleSubmit, setError, watch, getValues } =
+  const { control, handleSubmit, setError, watch } =
     useForm<AdditionalPatientReferralFormData>();
-  const date = watch("date");
   const additionalFormHandler = (
     payload: AdditionalPatientReferralFormData
   ) => {

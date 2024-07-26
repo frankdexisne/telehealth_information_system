@@ -40,7 +40,6 @@ const MatchPatients = ({
   address,
   onSelect,
   hasAddress = false,
-  showMapButton = false,
   getResultCount,
 }: MatchPatientsProps) => {
   const [settingDemographic, setSettingDemographic] = useState(false);

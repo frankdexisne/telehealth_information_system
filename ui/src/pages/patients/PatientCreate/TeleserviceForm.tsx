@@ -4,78 +4,34 @@ import {
   ApiSelect,
 } from "../../../components/use-form-controls";
 import { useForm } from "react-hook-form";
-import {
-  Button,
-  Grid,
-  Switch,
-  TextInput as TextInputCore,
-  Title,
-  Modal,
-  Paper,
-  ActionIcon,
-} from "@mantine/core";
+import { Button, Grid, Switch } from "@mantine/core";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { DemographicFormData } from "./DemographicForm";
 import { useState } from "react";
-import { LogData } from ".";
 import { plaformType } from "../../../components/patients";
 import { postRequest } from "../../../hooks";
-import Swal from "sweetalert2";
-import TeleservicePatientResult from "./TeleservicePatientResult";
 import { useNavigate } from "react-router-dom";
-import { IconSearch, IconX } from "@tabler/icons-react";
-import { ProfileHeaderProps } from "./TeleservicePatientResult";
-import { useDisclosure } from "@mantine/hooks";
-import ScheduleForm from "./ScheduleForm";
 interface TeleserviceFormProps {
   log_datetime: string;
   inquiry: string;
 }
 
 type MergeTeleserviceFormData = TeleserviceFormProps & DemographicFormData;
-interface SearchProps {
-  hpercode: string | null;
-  lname: string | null;
-  fname: string | null;
-  mname: string | null;
-}
 const TeleserviceForm = ({
   logData,
-  platform,
 }: {
-  logData: LogData;
+  logData: any;
   platform: plaformType;
 }) => {
   const navigate = useNavigate();
-  const [opened, { open, close }] = useDisclosure(false);
-  const [search, setSearch] = useState<SearchProps>({
-    hpercode: null,
-    lname: null,
-    fname: null,
-    mname: null,
-  });
-  const [withPatient, setWithPatient] = useState<boolean>(false);
   const [notRespond, setNotRespond] = useState<boolean>(false);
-  const suffixes = useSelector((state: RootState) => state.select.suffixes);
-  const regions = useSelector((state: RootState) => state.select.regions);
   const departments = useSelector(
     (state: RootState) => state.select.departments
   );
-  const { control, handleSubmit, watch } = useForm<MergeTeleserviceFormData>();
-
-  const selectedRegion = watch("regcode");
-  const selectedProvince = watch("provcode");
-  const selectedCity = watch("ctycode");
+  const { control, handleSubmit } = useForm<MergeTeleserviceFormData>();
 
   const submitTeleservice = (payload: MergeTeleserviceFormData) => {
-    const platformIds = {
-      call: 1,
-      "facebook/messenger": 2,
-      radio: 3,
-      viber: 4,
-    };
-
     const data = {
       ...payload,
       log_datetime: logData.date + " " + logData.time,
@@ -83,13 +39,6 @@ const TeleserviceForm = ({
     };
     postRequest("/teleclerk-logs", data).then(() => {
       navigate("/teleclerk");
-      // Swal.fire({
-      //   title: "Success",
-      //   text: "Teleservice successfully save",
-      //   icon: "success",
-      // }).then(() => {
-      //   navigate("/teleclerk");
-      // });
     });
   };
 
@@ -152,7 +101,6 @@ const TeleserviceForm = ({
               name="department_id"
               label="Department"
               data={departments}
-              isRequired={withPatient}
             />
             <TextInput name="update" control={control} label="Update" />
           </Grid.Col>
@@ -161,7 +109,6 @@ const TeleserviceForm = ({
             <Switch
               label="Not Respond"
               size="md"
-              className={`${withPatient ? "hidden" : ""}`}
               onChange={(event) => setNotRespond(event.currentTarget.checked)}
             />
 

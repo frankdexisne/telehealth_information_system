@@ -11,8 +11,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useState } from "react";
-import Swal from "sweetalert2";
-import { postRequest, putRequest } from "../../../hooks/use-http";
+import { putRequest } from "../../../hooks/use-http";
 import { plaformType } from "../../../components/patients";
 import { CHIEF_COMPLAINT_CREATE } from "../../../interfaces/PermissionList";
 import HasPermission from "../../../utils/has-permission";
@@ -46,40 +45,12 @@ const ChiefComplaintItem = ({
   chief_complaint,
   created_at,
   is_lock,
-  is_follow_up,
   onSelect,
   showAction = false,
   onCreateFollowUp,
-  platform,
 }: ChiefComplaintItemProps) => {
-  const platformIds = {
-    call: 1,
-    "facebook/messenger": 2,
-    radio: 3,
-    viber: 4,
-  };
-
   const followUpHandler = () => {
     onCreateFollowUp(id);
-    // if (platform) {
-    //   Swal.fire({
-    //     title: "Creating follow up?",
-    //     text: "Do you want to continue!",
-    //     icon: "question",
-    //     showCancelButton: true,
-    //     confirmButtonColor: "#3085d6",
-    //     cancelButtonColor: "#d33",
-    //     confirmButtonText: "Yes, create it!",
-    //   }).then((result) => {
-    //     if (result.isConfirmed) {
-    //       putRequest("/patient-chief-complaints/" + id + "/follow-up", {
-    //         platform_id: platformIds[platform],
-    //       }).then(() => {
-    //         onCreateFollowUp();
-    //       });
-    //     }
-    //   });
-    // }
   };
 
   return (
@@ -137,7 +108,7 @@ const ChiefComplaints = ({
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<number>();
   const [opened, { open, close }] = useDisclosure(false);
-  const { data, pagination, isFetching, refetch } = useTable({
+  const { data, pagination, isFetching } = useTable({
     endpoint: "encounters",
     pageSize: 10,
     parameters: {

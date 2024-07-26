@@ -2,12 +2,16 @@ import { Group, Text } from "@mantine/core";
 import { Dropzone, DropzoneProps } from "@mantine/dropzone";
 import api from "../../utils/api";
 
-const AttachFile = (props: Partial<DropzoneProps>) => {
+interface AttachFileProps {
+  encounter_id: number;
+}
+
+const AttachFile = (props: Partial<DropzoneProps & AttachFileProps>) => {
   return (
     <Dropzone
       onDrop={(files) => {
         api.post(
-          "/patient-chief-complaints/attach-file",
+          `/patient-chief-complaints/attach-file/${props.encounter_id}`,
           {
             file: files[0],
           },

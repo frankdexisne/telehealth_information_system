@@ -4,7 +4,7 @@ namespace App\Api\Patients;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
-use App\Models\{Encounter, PatientChiefComplaint, TeleclerkLog, PatientProfile, CallLog, ForwardToHomis, Demographic, TeleservePatient, TeleserveDemographic};
+use App\Models\{Encounter, PatientChiefComplaint, TeleclerkLog, PatientProfile, CallLog, ForwardToHomis, Demographic, TeleservePatient, TeleserveDemographic, ConsultationAttachment};
 use App\Http\Requests\{PatientChiefComplaintRequest, PatientRequest};
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\{DB, Storage};
@@ -229,7 +229,7 @@ class PatientChiefComplaintController extends ApiController
         return $this->success([], Response::HTTP_NO_CONTENT);
     }
 
-    public function attachFile(Request $request) {
+    public function attachFile(Request $request, Encounter $encounter) {
         $request->validate([
             'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Adjust validation rules as needed
         ]);
@@ -238,7 +238,17 @@ class PatientChiefComplaintController extends ApiController
 
         $remoteFilePath =  '/' . $uploadedFile->getClientOriginalName();
 
-        Storage::disk('ftp')->put($remoteFilePath, file_get_contents($uploadedFile->path()));
+        // Storage::disk('ftp')->put($remoteFilePath, file_get_contents($uploadedFile->path()));
+        // $uploadedFile->storeAs('patient_chief_complaints');
+        $fileName = $uploadedFile->getClientOriginalName();
+        $uploadedFile->move(public_path('/patient_chief_complaints/' . $encounter->patient_chief_complaint_id . '/'), $fileName);
+
+        ConsultationAttachment::create([
+            'user_id' => auth()->id(),
+            'patient_chief_complaint_id' => $encounter->patient_chief_complaint_id,
+            'encounter_id' => $encounter->id,
+            'uri' => $fileName
+        ]);
 
         return $this->success([], Response::HTTP_NO_CONTENT);
     }

@@ -1,9 +1,5 @@
 import { useForm } from "react-hook-form";
-import {
-  ApiSelect,
-  TextInput,
-  Select,
-} from "../../../components/use-form-controls";
+import { ApiSelect, TextInput } from "../../../components/use-form-controls";
 import {
   Divider,
   Grid,
@@ -23,23 +19,6 @@ import { RootState } from "../../../store";
 import { useSelector } from "react-redux";
 import { useDisclosure } from "@mantine/hooks";
 
-interface AdditionalPatientFormData {
-  contact_no: string;
-  occupation: string;
-  informant: string;
-  log_date: string;
-  log_time: string;
-  platform_id: number;
-  patempstat: string;
-  chief_complaint: string;
-  patient_condition_id: number;
-  consultation_status_id: number;
-  regcode: string;
-  provcode: string;
-  ctycode: string;
-  schedule_datetime: string;
-}
-
 interface ScheduleDate {
   date: string;
   scheduled: number;
@@ -47,11 +26,10 @@ interface ScheduleDate {
 }
 
 const ReferralForm = () => {
-  const regions = useSelector((state: RootState) => state.select.regions);
   const departments = useSelector(
     (state: RootState) => state.select.departments
   );
-  const { control, setValue, watch } = useForm();
+  const { control, setValue } = useForm();
 
   const [selectedMonth, setSelectedMonth] = useState<string>(
     moment().format("YYYY-MM")
@@ -72,16 +50,12 @@ const ReferralForm = () => {
             setScheduleDates(res.data.dates);
             setLoading(false);
           })
-          .catch((err) => setLoading(false));
+          .catch(() => setLoading(false));
       }
     }, 500);
 
     return () => clearTimeout(timeout);
   }, [selectedMonth, selectedDepartment]);
-
-  const selectedRegion = watch("regcode");
-  const selectedProvince = watch("provcode");
-  const selectedCity = watch("ctycode");
 
   return (
     <>
@@ -126,28 +100,6 @@ const ReferralForm = () => {
         </Grid>
       )}
 
-      {/* <ApiSelect
-        control={control}
-        label="Department"
-        name="department_id"
-        api="selects/departments?is_doctor=1"
-      />
-      <TextInput
-        type="month"
-        control={control}
-        label="Month"
-        name="month_year"
-      />
-      <Divider
-        my={15}
-        label={<Text>Available Dates</Text>}
-        labelPosition="left"
-      />
-      <Grid>
-        <Grid.Col span={2}>
-          <Day date={new Date()} scheduled={10} dailyLimit={20} />
-        </Grid.Col>
-      </Grid> */}
       <Modal
         size="xl"
         title="Appointment Information"
@@ -157,90 +109,6 @@ const ReferralForm = () => {
         centered
       >
         <form>
-          {/* <Divider
-            label={<Text size="sm">Demographic</Text>}
-            labelPosition="left"
-            mb={5}
-          />
-          <Grid>
-            <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
-              <Select
-                control={control}
-                name="regcode"
-                label="Region"
-                isRequired
-                data={regions}
-                // value={data?.demographic.regcode}
-                // defaultValue="05"
-              />
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
-              <ApiSelect
-                label="Province"
-                control={control}
-                name="provcode"
-                api={`selects/provinces?regcode=${selectedRegion || "05"}`}
-                isRequired
-                // value={data?.demographic?.provcode}
-                // value="0505"
-              />
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
-              <ApiSelect
-                label="City"
-                control={control}
-                name="ctycode"
-                api={`selects/cities?provcode=${selectedProvince || "0505"}`}
-                isRequired
-                // value={data?.demographic?.ctycode}
-              />
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
-              <ApiSelect
-                label="Barangay"
-                control={control}
-                name="bgycode"
-                api={`selects/barangays?ctycode=${selectedCity}`}
-                isRequired
-                // value={data?.demographic?.brg}
-              />
-            </Grid.Col>
-          </Grid>
-          <Grid>
-            <Grid.Col span={{ base: 12, md: 12, lg: 9 }}>
-              <TextInput name="patstr" control={control} label="Street" />
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 12, lg: 3 }}>
-              <TextInput name="patzip" control={control} label="Zipcode" />
-            </Grid.Col>
-          </Grid> */}
-          {/* <Divider
-            label={<Text size="sm">Appointment Detail</Text>}
-            labelPosition="left"
-            my={10}
-          /> */}
-          {/* <TextInput
-            name="contact_no"
-            label="Contact Number"
-            control={control}
-            isRequired
-          />
-          <TextInput
-            name="occupation"
-            label="Occupation"
-            control={control}
-            isRequired
-          />
-          <Select
-            control={control}
-            name="patempstat"
-            label="Employment Status"
-            isRequired
-            data={[
-              { value: "EMPLO", label: "EMPLOYED" },
-              { value: "UNEMP", label: "UNEMPLOYED" },
-            ]}
-          /> */}
           <Grid>
             <Grid.Col span={6}>
               <ApiSelect
@@ -283,9 +151,6 @@ const ReferralForm = () => {
           </Grid>
 
           <ButtonGroup className="mt-5 flex justify-center">
-            {/* <Button color="gray" onClick={onCancel}>
-              Cancel
-            </Button> */}
             <Button type="submit" w="100%">
               Submit
             </Button>

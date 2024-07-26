@@ -2,7 +2,6 @@ import {
   Grid,
   Divider,
   Text,
-  Group,
   Button,
   Select as SelectCore,
   TextInput as TextInputCore,
@@ -56,25 +55,13 @@ const NewProfile = () => {
   const [appointmentData, setAppointmentData] = useState<NewProfileData>();
   const [isSelectingDate, setIsSelectingDate] = useState<boolean>(false);
   const [scheduleDates, setScheduleDates] = useState<ScheduleDate[]>([]);
-  const civilStatuses = useSelector(
-    (state: RootState) => state.select.civil_statuses
-  );
-  const regions = useSelector((state: RootState) => state.select.regions);
+
   const departments = useSelector(
     (state: RootState) => state.select.departments
   );
   const suffixes = useSelector((state: RootState) => state.select.suffixes);
-  const patientConditions = useSelector(
-    (state: RootState) => state.select.patient_conditions
-  );
-  const consultationStatuses = useSelector(
-    (state: RootState) => state.select.consultation_statuses
-  );
-  const [disableIsPregnant, setDisableIsPregnant] = useState(true);
-  const { control, watch, handleSubmit, setValue } = useForm<NewProfileData>();
 
-  const dob = watch("dob");
-  const gender = watch("gender");
+  const { control, handleSubmit } = useForm<NewProfileData>();
 
   const createAppointment = (payload: NewProfileData) => {
     setAppointmentData({ ...payload });
@@ -97,23 +84,12 @@ const NewProfile = () => {
           schedule_datetime: date + " 08:00:00",
           department_id: selectedDepartment,
         };
-        postRequest("/patients/create-appointment", payload).then((res) => {
+        postRequest("/patients/create-appointment", payload).then(() => {
           navigate("/teleclerk");
         });
       }
     });
   };
-
-  useEffect(() => {
-    if (gender === "female") {
-      const birthday = moment(dob);
-      const currentDate = moment();
-      const age = moment.duration(currentDate.diff(birthday)).years();
-      setDisableIsPregnant(age < 10);
-    } else {
-      setDisableIsPregnant(true);
-    }
-  }, [dob, gender]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -126,7 +102,7 @@ const NewProfile = () => {
             setScheduleDates(res.data.dates);
             setLoading(false);
           })
-          .catch((err) => setLoading(false));
+          .catch(() => setLoading(false));
       }
     }, 500);
 

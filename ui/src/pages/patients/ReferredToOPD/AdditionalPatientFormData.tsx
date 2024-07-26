@@ -17,11 +17,7 @@ import {
   Select as SelectCore,
   Loader,
 } from "@mantine/core";
-import {
-  postRequest,
-  errorProvider,
-  getRequest,
-} from "../../../hooks/use-http";
+import { getRequest } from "../../../hooks/use-http";
 import { AxiosResponse } from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
@@ -80,38 +76,17 @@ const DemographicItem = ({
 const AdditionalPatientFormData = ({
   hpercode,
   onCancel,
-  onSubmit,
 }: AdditionalPatientFormDataProps) => {
   const regions = useSelector((state: RootState) => state.select.regions);
   const departments = useSelector(
     (state: RootState) => state.select.departments
   );
 
-  const additionalFormHandler = (payload: AdditionalPatientFormData) => {
-    postRequest("/patients/" + hpercode + "/clone-to-telehealth", payload)
-      .then((res) => onSubmit(res))
-      .catch((error) => {
-        errorProvider<AdditionalPatientFormData>(
-          error,
-          function (_errors: AdditionalPatientFormData) {
-            Object.keys(_errors).map((field) => {
-              setError(field as keyof AdditionalPatientFormData, {
-                type: "custom",
-                message:
-                  _errors[field as keyof AdditionalPatientFormData]?.toString(),
-              });
-            });
-          }
-        );
-      });
-  };
-
   const { data } = useHomisPatient({
     hpercode: hpercode!,
   });
 
-  const { control, handleSubmit, setError, watch, setValue } =
-    useForm<AdditionalPatientFormData>();
+  const { control, watch, setValue } = useForm<AdditionalPatientFormData>();
 
   const selectedRegion = watch("regcode");
   const selectedProvince = watch("provcode");
@@ -135,7 +110,7 @@ const AdditionalPatientFormData = ({
             setScheduleDates(res.data.dates);
             setLoading(false);
           })
-          .catch((err) => setLoading(false));
+          .catch(() => setLoading(false));
       }
     }, 500);
 

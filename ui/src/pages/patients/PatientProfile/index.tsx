@@ -11,7 +11,6 @@ import PersonalDetails from "./PersonalDetails";
 import DemographicDetails from "./DemographicDetails";
 import { useParams } from "react-router-dom";
 import usePatient from "../../../hooks/use-patient";
-import ChiefComplaints from "./ChiefComplaints";
 import { useDisclosure } from "@mantine/hooks";
 import PatientBinding from "./PatientBinding";
 import Swal from "sweetalert2";
@@ -29,7 +28,6 @@ interface FilterMappingProps {
 }
 
 const PatientProfile = () => {
-  const user = useSelector((state: RootState) => state.auth.user);
   const { id } = useParams();
   const [opened, { open, close }] = useDisclosure(false);
   const permissions = useSelector((state: RootState) => state.auth.permissions);

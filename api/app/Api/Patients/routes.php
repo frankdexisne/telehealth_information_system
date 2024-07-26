@@ -121,6 +121,9 @@ Route::controller(App\Api\Patients\PatientChiefComplaintController::class)
     ->middleware('permission:' . Permission::CHIEF_COMPLAINT_LIST)
     ->name('index');
 
+    Route::post('attach-file/{encounter}', 'attachFile')
+    ->name('attachFile');
+
     Route::post('/{patientProfile}', 'store')
     ->middleware('permission:' . Permission::CHIEF_COMPLAINT_CREATE)
     ->name('store');
@@ -137,8 +140,7 @@ Route::controller(App\Api\Patients\PatientChiefComplaintController::class)
     ->middleware('permission:' . Permission::CHIEF_COMPLAINT_UPDATE)
     ->name('show');
 
-    Route::post('attach-file', 'attachFile')
-    ->name('attachFile');
+    
 
     Route::get('{patientChiefComplaint}/attachments', 'getAttachments')
     // ->middleware('permission:' . Permission::PATIENT_ATTACHMENT)

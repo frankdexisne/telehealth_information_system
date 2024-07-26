@@ -1,5 +1,4 @@
 import { Divider, Title } from "@mantine/core";
-import Doctors from ".";
 import { SelectPlatform } from "../../../components/patients";
 import DoctorProfile from "./DoctorProfile";
 const DoctorForm = () => {

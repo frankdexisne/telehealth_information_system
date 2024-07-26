@@ -7,12 +7,8 @@ import { PatientRowData } from "..";
 import AppTanstackTable, {
   ColumnDefinition,
 } from "../../../components/tables/AppTanstackTable";
-import { ButtonGroup, Button, Card, Badge } from "@mantine/core";
-import {
-  IconUserPlus,
-  IconUserSearch,
-  IconArrowRight,
-} from "@tabler/icons-react";
+import { ButtonGroup, Button } from "@mantine/core";
+import { IconUserPlus, IconArrowRight } from "@tabler/icons-react";
 import moment from "moment";
 import { getRequest } from "../../../hooks/use-http";
 import { Modal } from "@mantine/core";
@@ -35,7 +31,6 @@ import { useState } from "react";
 const PatientResult = ({
   filter,
   onCreate,
-  onSearch,
   onSelect,
   onSelectFromHOMIS,
   searched = false,
@@ -47,7 +42,7 @@ const PatientResult = ({
     pageSize: 5,
     parameters: { ...filter, searching: true },
   });
-  const [opened, { open, close }] = useDisclosure(false);
+  const [opened, { close }] = useDisclosure(false);
   const [hpercode, setHpercode] = useState<string | null>(null);
 
   const validatingHandler = (hpercode: string) => {
