@@ -30,15 +30,21 @@ const AdditionalPatientReferralFormData = ({
   onCancel,
   onSubmit,
 }: AdditionalPatientReferralFormDataProps) => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [disableDepartment, setDisableDepartment] = useState<boolean>(true);
   const { control, handleSubmit, setError, watch } =
     useForm<AdditionalPatientReferralFormData>();
   const additionalFormHandler = (
     payload: AdditionalPatientReferralFormData
   ) => {
+    setSubmitting(true);
     postRequest("/patients/" + hpercode + "/clone-to-telehealth", payload)
-      .then((res) => onSubmit(res))
+      .then((res) => {
+        setSubmitting(false);
+        onSubmit(res);
+      })
       .catch((error) => {
+        setSubmitting(false);
         errorProvider<AdditionalPatientReferralFormData>(
           error,
           function (_errors: AdditionalPatientReferralFormData) {
@@ -115,7 +121,9 @@ const AdditionalPatientReferralFormData = ({
         <Button color="gray" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" loading={submitting}>
+          Submit
+        </Button>
       </ButtonGroup>
     </form>
   );

@@ -8,28 +8,53 @@ import { Button, Grid, Switch } from "@mantine/core";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { DemographicFormData } from "./DemographicForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { plaformType } from "../../../components/patients";
-import { postRequest } from "../../../hooks";
-import { useNavigate } from "react-router-dom";
+import { postRequest, putRequest } from "../../../hooks";
+import { useNavigate, useParams } from "react-router-dom";
 interface TeleserviceFormProps {
-  log_datetime: string;
-  inquiry: string;
+  inquiry?: string;
+  platform_id?: number;
+  informant?: string;
+  log_date?: string;
+  log_time?: string;
+  department_id?: string;
+  remarks?: string;
+  update?: string;
 }
 
 type MergeTeleserviceFormData = TeleserviceFormProps & DemographicFormData;
 const TeleserviceForm = ({
   logData,
+  inquiry,
+  platform_id,
+  informant,
+  log_date,
+  log_time,
+  department_id,
+  remarks,
+  update,
 }: {
   logData: any;
   platform: plaformType;
+  inquiry: string;
+  platform_id: number;
+  informant: string;
+  log_date: string;
+  log_time: string;
+  department_id: string;
+  remarks: string;
+  update: string;
 }) => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { id } = useParams();
   const [notRespond, setNotRespond] = useState<boolean>(false);
   const departments = useSelector(
     (state: RootState) => state.select.departments
   );
-  const { control, handleSubmit } = useForm<MergeTeleserviceFormData>();
+  const { control, handleSubmit, setValue } =
+    useForm<MergeTeleserviceFormData>();
 
   const submitTeleservice = (payload: MergeTeleserviceFormData) => {
     const data = {
@@ -37,10 +62,39 @@ const TeleserviceForm = ({
       log_datetime: logData.date + " " + logData.time,
       not_respond: notRespond ? 1 : 0,
     };
-    postRequest("/teleclerk-logs", data).then(() => {
-      navigate("/teleclerk");
-    });
+    setSubmitting(true);
+    if (id) {
+      putRequest("/teleclerk-logs/" + id, data).then(() => {
+        navigate("/teleclerk");
+        setSubmitting(false);
+      });
+    } else {
+      postRequest("/teleclerk-logs", data).then(() => {
+        navigate("/teleclerk");
+        setSubmitting(false);
+      });
+    }
   };
+
+  useEffect(() => {
+    if (platform_id) setValue("platform_id", platform_id);
+    if (inquiry) setValue("inquiry", inquiry);
+    if (informant) setValue("informant", informant);
+    if (log_date) setValue("log_date", log_date);
+    if (log_time) setValue("log_time", log_time);
+    if (department_id) setValue("department_id", department_id);
+    if (remarks) setValue("remarks", remarks);
+    if (update) setValue("update", update);
+  }, [
+    platform_id,
+    inquiry,
+    informant,
+    log_date,
+    log_time,
+    department_id,
+    remarks,
+    update,
+  ]);
 
   return (
     <form onSubmit={handleSubmit(submitTeleservice)}>
@@ -113,7 +167,9 @@ const TeleserviceForm = ({
             />
 
             <div className="mt-2">
-              <Button type="submit">SUBMIT</Button>
+              <Button type="submit" loading={submitting}>
+                SUBMIT
+              </Button>
             </div>
           </Grid.Col>
         </>

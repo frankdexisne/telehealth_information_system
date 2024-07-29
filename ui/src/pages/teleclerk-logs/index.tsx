@@ -15,6 +15,7 @@ import { Grid, InputLabel, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import PageHeader from "../../components/base/PageHeader";
+import { useNavigate } from "react-router-dom";
 
 interface TeleclerkLogRowData {
   id: number;
@@ -40,6 +41,7 @@ interface TeleclerkLogRowData {
 }
 
 const TeleclerkLogs = () => {
+  const navigate = useNavigate();
   const departments = useSelector(
     (state: RootState) => state.select.departments
   );
@@ -155,7 +157,9 @@ const TeleclerkLogs = () => {
           id={row.id}
           canDelete={true}
           canEdit={true}
-          onEdit={() => {}}
+          onEdit={() => {
+            navigate("/inquiry/" + row.id);
+          }}
           onDelete={() => refetch()}
         />
       ),

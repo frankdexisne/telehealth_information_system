@@ -21,7 +21,7 @@ import { RootState } from "../../../store";
 import ProfileHeader from "../PatientProfile/ProfileHeader";
 import { useHomisPatient } from "../../../hooks";
 import { IconSearch } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface AdditionalPatientFormData {
   contact_no: string;
@@ -66,6 +66,7 @@ const AdditionalPatientFormData = ({
   onCancel,
   onSubmit,
 }: AdditionalPatientFormDataProps) => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const regions = useSelector((state: RootState) => state.select.regions);
   const patientConditions = useSelector(
     (state: RootState) => state.select.patient_conditions
@@ -75,9 +76,14 @@ const AdditionalPatientFormData = ({
   );
 
   const additionalFormHandler = (payload: AdditionalPatientFormData) => {
+    setSubmitting(true);
     postRequest("/patients/" + hpercode + "/clone-to-telehealth", payload)
-      .then((res) => onSubmit(res))
+      .then((res) => {
+        onSubmit(res);
+        setSubmitting(false);
+      })
       .catch((error) => {
+        setSubmitting(false);
         errorProvider<AdditionalPatientFormData>(
           error,
           function (_errors: AdditionalPatientFormData) {
@@ -326,7 +332,7 @@ const AdditionalPatientFormData = ({
             {/* <Button color="gray" onClick={onCancel}>
               Cancel
             </Button> */}
-            <Button type="submit" w="100%">
+            <Button type="submit" w="100%" loading={submitting}>
               Submit
             </Button>
           </ButtonGroup>

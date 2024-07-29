@@ -17,7 +17,11 @@ import {
   Select as SelectCore,
   Loader,
 } from "@mantine/core";
-import { getRequest } from "../../../hooks/use-http";
+import {
+  getRequest,
+  postRequest,
+  errorProvider,
+} from "../../../hooks/use-http";
 import { AxiosResponse } from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
@@ -28,6 +32,7 @@ import Day from "./Day";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 interface AdditionalPatientFormData {
   contact_no: string;
@@ -48,6 +53,7 @@ interface AdditionalPatientFormData {
 
 interface AdditionalPatientFormDataProps {
   hpercode: string | null;
+  department_id: number;
   onCancel: () => void;
   onSubmit: (res: AxiosResponse) => void;
 }
@@ -75,8 +81,11 @@ const DemographicItem = ({
 
 const AdditionalPatientFormData = ({
   hpercode,
+  department_id,
   onCancel,
 }: AdditionalPatientFormDataProps) => {
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const regions = useSelector((state: RootState) => state.select.regions);
   const departments = useSelector(
     (state: RootState) => state.select.departments
@@ -86,7 +95,39 @@ const AdditionalPatientFormData = ({
     hpercode: hpercode!,
   });
 
-  const { control, watch, setValue } = useForm<AdditionalPatientFormData>();
+  const onSubmitHandler = (payload: AdditionalPatientFormData) => {
+    console.log(payload);
+  };
+
+  const additionalFormHandler = (payload: AdditionalPatientFormData) => {
+    setSubmitting(true);
+    postRequest("/patients/" + hpercode + "/clone-to-telehealth-appointment", {
+      ...payload,
+      department_id,
+    })
+      .then(() => {
+        navigate("/teleclerk");
+        setSubmitting(false);
+      })
+      .catch((error) => {
+        setSubmitting(false);
+        errorProvider<AdditionalPatientFormData>(
+          error,
+          function (_errors: AdditionalPatientFormData) {
+            Object.keys(_errors).map((field) => {
+              setError(field as keyof AdditionalPatientFormData, {
+                type: "custom",
+                message:
+                  _errors[field as keyof AdditionalPatientFormData]?.toString(),
+              });
+            });
+          }
+        );
+      });
+  };
+
+  const { control, watch, setValue, handleSubmit, setError } =
+    useForm<AdditionalPatientFormData>();
 
   const selectedRegion = watch("regcode");
   const selectedProvince = watch("provcode");
@@ -206,7 +247,7 @@ const AdditionalPatientFormData = ({
         opened={opened}
         onClose={close}
       >
-        <form>
+        <form onSubmit={handleSubmit(additionalFormHandler)}>
           <Divider
             label={<Text size="sm">Demographic</Text>}
             labelPosition="left"

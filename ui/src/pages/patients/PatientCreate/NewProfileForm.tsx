@@ -40,6 +40,7 @@ interface NewProfileFormData {
 }
 
 const NewProfileForm = () => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
   const civilStatuses = useSelector(
     (state: RootState) => state.select.civil_statuses
@@ -62,7 +63,15 @@ const NewProfileForm = () => {
   const selectedCity = watch("ctycode");
 
   const createTeleconsultation = (payload: NewProfileFormData) => {
-    postRequest("/patients", payload).then(() => navigate("/teleclerk"));
+    setSubmitting(true);
+    postRequest("/patients", payload)
+      .then(() => {
+        navigate("/teleclerk");
+        setSubmitting(false);
+      })
+      .catch(() => {
+        setSubmitting(false);
+      });
   };
 
   useEffect(() => {
@@ -326,7 +335,7 @@ const NewProfileForm = () => {
           </Grid.Col>
         </Grid>
         <Group justify="center" mt="xl">
-          <Button w={300} type="submit">
+          <Button w={300} type="submit" loading={submitting}>
             Submit
           </Button>
         </Group>

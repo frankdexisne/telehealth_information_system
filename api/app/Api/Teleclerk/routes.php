@@ -11,6 +11,9 @@ Route::controller(App\Api\Teleclerk\TeleclerkLogController::class)
     Route::post('/', 'store')
     ->name('store');
 
+     Route::get('/{teleclerkLog}', 'show')
+    ->name('show');
+
     Route::put('/{teleclerkLog}', 'update')
     ->name('update');
 

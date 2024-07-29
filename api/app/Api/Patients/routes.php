@@ -48,6 +48,9 @@ Route::controller(App\Api\Patients\PatientController::class)
     ->middleware('permission:' . Permission::PATIENT_CREATE)
     ->name('cloneToTelehealth');
 
+    Route::post('/{hpercode}/clone-to-telehealth-appointment','cloneToTelehealthAppointment')
+    ->name('cloneToTelehealthAppointment');
+
     Route::put('/{patientProfile}/{hpercode}/bind','bindToTelehealth')
     ->middleware('permission:' . Permission::PATIENT_CREATE)
     ->name('bindToTelehealth');

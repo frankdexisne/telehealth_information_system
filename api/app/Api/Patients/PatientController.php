@@ -424,6 +424,87 @@ class PatientController extends ApiController
         return $this->success(['id' => $patientProfileId], Response::HTTP_OK);
     }
 
+    public function cloneToTelehealthAppointment(PatientRequest $request, string $hpercode) {
+        $hperson = Hperson::where('hpercode', $hpercode)->first();
+
+        if (!$hperson) return response()->json(['message' => "No record found"], 422);
+
+        // $patientProfileId = $hperson->patientClone($request->contact_no, $request->occupation);
+
+        // $patientProfile = PatientProfile::find($patientProfileId);
+
+        // Demographic::firstOrNew([
+        //     'patient_profile_id' => $patientProfileId
+        // ])
+        // ->fill([
+        //     'regcode' => $request->regcode,
+        //     'provcode' => $request->provcode,
+        //     'ctycode' => $request->ctycode,
+        //     'bgycode' => $request->bgycode,
+        //     'patstr' => $request->patstr ? $request->patstr : "",
+        //     'patzip' => $request->patzip ? $request->patzip : "",
+        // ])
+        // ->save();
+
+        // $callLog = $this->callLog->generateCallLog($patientProfile, 2);
+
+        // $data = PatientChiefComplaint::create([
+        //     'chief_complaint' => $request->chief_complaint,
+        //     'patient_profile_id' => $patientProfileId
+        // ]);
+
+        // $encounter = $data->encounter()->create([
+        //     'is_follow_up' => 0,
+        //     'is_active' => 1,
+        //     'call_log_id' => $callLog->id,
+        //     'patient_condition_id' => $request->patient_condition_id,
+        //     'consultation_status_id' => $request->consultation_status_id
+        // ]);
+
+        $teleservePatient = TeleservePatient::create([
+            'lname' => $hperson->patlast,
+            'fname' => $hperson->patfirst,
+            'mname' => $hperson->patmiddle,
+            'suffix' => $hperson->patsuffix,
+            'contact_no' => $request->contact_no,
+            'hpercode' => $hpercode
+        ]);
+
+        $teleserveDemographic = TeleserveDemographic::create([
+            'teleserve_patient_id' => $teleservePatient->id,
+            'regcode' => $request->regcode,
+            'provcode' => $request->provcode,
+            'ctycode' => $request->ctycode,
+            'bgycode' => $request->bgycode,
+            'patstr' => $request->patstr,
+        ]);
+
+        TeleclerkLog::create([
+            'teleserve_patient_id' => $teleservePatient->id,
+            'log_datetime' => now()->format("Y-m-d H:i:s"),
+            'platform_id' => 2,
+            'informant' => $request->informant,
+            'inquiry' => "OPD APPOINTMENT",
+            'is_teleconsult' => 0,
+        ]);
+
+        PatientSchedule::create([
+            'appointmentable_type' => 'App\\Models\\TeleservePatient',
+            'appointmentable_id' => $teleservePatient->id,
+            'schedule_status_id' => 1,
+            'schedule_datetime' => $request->schedule_datetime,
+            'reason' => "OPD Appointment",
+            'department_id' => $request->department_id,
+            'user_id' => auth()->id()
+        ]);
+
+
+        $patientName = $teleservePatient->lname . ', '. $teleservePatient->fname . ' ' . $teleservePatient->mname;
+        $this->sendEvent('created', 'Patient Schedule', $patientName . ' is already scheduled');
+
+        return $this->success([], Response::HTTP_NO_CONTENT);
+    }
+
     public function bindToTelehealth(Request $request, PatientProfile $patientProfile, string $hpercode) {
         $hperson = Hperson::where('hpercode', $hpercode)->first();
 

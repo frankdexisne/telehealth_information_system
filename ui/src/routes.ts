@@ -134,6 +134,9 @@ const Departments = lazy(() => import("./pages/settings/departments"));
 
 const ReferralToOPD = lazy(() => import("./pages/patients/ReferredToOPD"));
 const Inquiry = lazy(() => import("./pages/patients/Inquiry"));
+const UpdateInquiry = lazy(
+  () => import("./pages/patients/Inquiry/UpdateInquiry")
+);
 const CreateReferralToOPD = lazy(
   () => import("./pages/referral-to-opd/CreateReferralToOPD")
 );
@@ -221,6 +224,11 @@ const routes: AppRouteProps[] = [
   {
     path: "/inquiry",
     Component: Inquiry,
+    isPrivate: true,
+  },
+  {
+    path: "/inquiry/:id",
+    Component: UpdateInquiry,
     isPrivate: true,
   },
   {

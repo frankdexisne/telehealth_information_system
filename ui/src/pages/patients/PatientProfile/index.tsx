@@ -132,6 +132,7 @@ const PatientProfile = () => {
               informant: patient_profile?.informant,
               patempstat: patient_profile?.patempstat,
             }}
+            hideBackButton
           />
         </Tabs.Panel>
         <Tabs.Panel value="demographics">

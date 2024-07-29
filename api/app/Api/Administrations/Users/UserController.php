@@ -18,7 +18,7 @@ class UserController extends ApiController
     }
 
     public function index(Request $request) {
-        $pageSize = $request->has('pageSize') ? $request->pageSize : 10;
+        $pageSize = $request->has('pageSize') ? 10 : 10;
         $isBind = $request->has('is_bind') ? $request->is_bind : null;
 
         return $this->modelQuery

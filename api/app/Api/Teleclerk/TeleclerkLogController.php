@@ -78,6 +78,12 @@ class TeleclerkLogController extends ApiController
         return $this->success(['data' => $data], Response::HTTP_CREATED);
     }
 
+    public function show(TeleclerkLog $teleclerkLog) {
+        return $this->success([
+            'data' => $teleclerkLog,
+        ], Response::HTTP_OK);
+    }
+
     public function update(PatientRequest $request, TeleclerkLog $teleclerkLog) {
         $teleclerkLog->update($request->validated());
         return $this->success([], Response::HTTP_NO_CONTENT);

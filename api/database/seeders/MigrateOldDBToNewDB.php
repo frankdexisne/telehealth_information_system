@@ -31,6 +31,7 @@ class MigrateOldDBToNewDB extends Seeder
         // RUN ONLY ONCE THERE'S NO UNIQUE DISTINCTION OF THIS RECORD
         $this->call(PatientConsultationsTableSeeder::class);
         $this->call(ConsultationAttachmentsTableSeeder::class);
+        $this->call(UpdatePatientScheduleTableSeeder::class);
         
         
 

@@ -3,7 +3,8 @@ Route::controller(App\Api\Auth\AuthController::class)
 ->prefix('/auth')
 ->name('auth.')
 ->group(function() {
-    Route::post('/login', 'login')
+    Route::middleware('cors')
+    ->post('/login', 'login')
     ->name('login');
 
     Route::middleware('auth:sanctum')

@@ -9,9 +9,13 @@ import Swal from "sweetalert2";
 
 interface PersonalDetailsProps {
   personalData: ProfilingFormData;
+  hideBackButton?: boolean;
 }
 
-const PersonalDetails = ({ personalData }: PersonalDetailsProps) => {
+const PersonalDetails = ({
+  personalData,
+  hideBackButton = false,
+}: PersonalDetailsProps) => {
   const { id } = useParams();
   return (
     <div>
@@ -37,6 +41,7 @@ const PersonalDetails = ({ personalData }: PersonalDetailsProps) => {
         submitLabel="Update Details"
         submitPosition="left"
         showSubmit={HasPermission(PATIENT_UPDATE)}
+        hideBackButton={hideBackButton}
       />
     </div>
   );

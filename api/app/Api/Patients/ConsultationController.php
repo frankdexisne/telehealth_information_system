@@ -47,7 +47,7 @@ class ConsultationController extends ApiController
     public function followUpConsultations(Request $request) {
         $pageSize = $request->has('pageSize') ? $request->pageSize : 10;
         $teleclerk = $request->has('teleclerk') ? $request->teleclerk : null;
-        return Encounter::where('is_follow_up', 0)
+        return Encounter::where('is_follow_up', 1)
         ->where('encounters.is_active', 1)
         ->patientCaller()
         ->whereHas('patientChiefComplaint', function($query) use($request) {

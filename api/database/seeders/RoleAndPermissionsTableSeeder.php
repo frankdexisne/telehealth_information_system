@@ -309,6 +309,7 @@ class RoleAndPermissionsTableSeeder extends Seeder
                     Permission::TELECLERK_LOG_CREATE,
                     Permission::TELECLERK_LOG_UPDATE,
                     Permission::TELECLERK_LOG_DELETE,
+                    Permission::ENCOUNTER_TRIAGE_TO_DEPARTMENT,
                 ]
             ],
             [

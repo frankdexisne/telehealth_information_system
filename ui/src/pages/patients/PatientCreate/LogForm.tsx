@@ -5,7 +5,7 @@ import {
   Select,
 } from "../../../components/use-form-controls";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 
@@ -36,11 +36,17 @@ const LogForm = ({
   submitPosition = "center",
   showSubmit = true,
 }: LogFormProps) => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const regions = useSelector((state: RootState) => state.select.regions);
   const { control, handleSubmit, watch, setValue } = useForm<LogFormData>();
 
   const demographicHandler = (data: LogFormData) => {
+    setSubmitting(true);
     onSubmit(data);
+
+    setTimeout(() => {
+      setSubmitting(false);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -165,7 +171,11 @@ const LogForm = ({
       </Grid>
 
       <Group justify={submitPosition} mt="xl">
-        {showSubmit && <Button type="submit">{submitLabel}</Button>}
+        {showSubmit && (
+          <Button type="submit" loading={submitting}>
+            {submitLabel}
+          </Button>
+        )}
       </Group>
     </form>
   );

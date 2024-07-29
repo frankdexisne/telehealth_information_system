@@ -37,6 +37,7 @@ class PatientRequest extends FormRequest
             case 'patients.update': return $this->patientUpdateRules();
             case 'patient-chief-complaints.store': return $this->patientChiefComplaintRules();
             case 'patients.cloneToTelehealth' : return $this->patientHomisToTelehealth();
+            case 'patients.cloneToTelehealthAppointment' : return $this->patientHomisToTelehealthAppointment();
             case 'demographics.store' : return $this->demographicRules();
             case 'demographics.update' : return $this->demographicRules();
             case 'patient-chief-complaints.completingDemographic' : return $this->demographicRules();
@@ -55,6 +56,15 @@ class PatientRequest extends FormRequest
             'chief_complaint' => ['required'],
             'patient_condition_id' => ['required', 'exists:patient_conditions,id'],
             'consultation_status_id' => ['required', 'exists:consultation_statuses,id']
+        ];
+    }
+
+     protected function patientHomisToTelehealthAppointment() {
+        return [
+            'contact_no' => ['required'],
+            'occupation' => ['required'],
+            'informant' => ['required'],
+            'patempstat' => ['required'],
         ];
     }
 

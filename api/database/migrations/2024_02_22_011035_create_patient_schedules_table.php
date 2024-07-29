@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('patient_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('patient_profile_id')->constrained();
+            $table->foreignId('patient_profile_id')->nullable($value = true)->constrained();
             $table->foreignId('schedule_status_id')->constrained();
             $table->datetime('schedule_datetime');
             $table->string('reason');
