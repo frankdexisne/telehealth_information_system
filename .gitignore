@@ -10,6 +10,7 @@ api/.env.production
 ui/node_modules
 ui/dist
 ui/.env.*
+ui/.env
 
 ws/node_modules
 ws/.env.*
